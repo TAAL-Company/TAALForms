@@ -1,0 +1,41 @@
+.all {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding-right: 25px;
+}
+
+.switch1 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+  margin-top: -3px;
+  margin-left: 3px;
+}
+
+.switch2 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: -3px;
+}
+
+.switch3 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: -3px;
+}
+
+.switch4 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: -3px;
+}
