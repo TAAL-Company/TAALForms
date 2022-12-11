@@ -11,6 +11,7 @@ import FileCopyIcon from "@mui/icons-material/FileCopy";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import EditIcon from "@mui/icons-material/Edit";
 import MultipleSelectChip from "./components/MultipleSelectChip";
+import TestsComp from "./components/TestsComp";
 function App() {
   //
 
@@ -118,9 +119,10 @@ function App() {
                   display: "flex",
                   flexDirection: "row",
                   height: "100%",
-                  width: "100%",
+                  width: "50px",
                   alignItems: "center",
                   justifyContent: "center",
+                  direction: "rtl",
                 }}
               ></MultipleSelectChip>
             </div>

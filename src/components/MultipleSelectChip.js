@@ -67,27 +67,44 @@ export default function MultipleSelectChip() {
   return (
     <div>
       <FormControl
+        size="small"
         sx={{
           m: 1,
           width: 200,
-          height: 15,
           //   minWidth: 220,
           //   maxWidth: 220,
           "& 	.MuiInputLabel-formControl": {
-            background: "white",
+            background: "none",
           },
         }}
       >
         <InputLabel id="demo-multiple-chip-label">התערבות אפשרית</InputLabel>
         <Select
+          // sx={{
+          //   "& 	.MuiSelect-outlined.MuiSelect-outlined .MuiSelect-outlined.MuiSelect-outlined:active .MuiSelect-outlined.MuiSelect-outlined:focus":
+          //     {
+          //       backgroundColor: "white",
+          //       textAlign: "left",
+          //       fontFamily: "sans-serif !important",
+          //       fontSize: "14px !important",
+          //       fontWeight: "400 !important",
+          //     },
+          // }}
           labelId="demo-multiple-chip-label"
           id="demo-multiple-chip"
+          label="התערבות אפשרית"
           multiple
           value={personName}
           onChange={handleChange}
           input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
           renderValue={(selected) => (
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 0.5,
+              }}
+            >
               {selected.map((value) => (
                 <Chip key={value} label={value} />
               ))}

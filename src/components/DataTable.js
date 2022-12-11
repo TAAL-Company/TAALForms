@@ -15,6 +15,7 @@ import {
 import FilterByGroups from "./FilterByGroups";
 import MultipleSelectChip from "./MultipleSelectChip";
 import AccessibleTabs1 from "./AccessibleTabs1";
+import TestsComp from "./TestsComp";
 import { heIL } from "@mui/x-data-grid";
 
 // const columnGroupingModel = [
@@ -202,6 +203,7 @@ const DataTable = ({ columns, rows, headers, groups, marginSearchBar }) => {
         }}
       >
         <MultipleSelectChip></MultipleSelectChip>
+        <TestsComp></TestsComp>
         <AccessibleTabs1></AccessibleTabs1>
 
         <DataGrid
