@@ -46,7 +46,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin-right: 260px;
+  /* margin-right: 260px; */
 }
 
 .workerName {

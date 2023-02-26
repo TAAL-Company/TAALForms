@@ -2,11 +2,10 @@ import "./Status.css";
 
 const Status = (props) => {
   const flagColor = props.classification;
-  console.log(flagColor);
 
   if (flagColor === "red") {
     return (
-      <div className="status" style={{ background: "rgb(225,0,0,0.4)" }}>
+      <div className="status" style={{ background: "#DD001A" }}>
         <div className="content">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +22,7 @@ const Status = (props) => {
                 r="10.925"
                 fill="white"
                 stroke="#fd0000"
-                stroke-width="2"
+                strokeWidth="2"
               />
               <path
                 id="Path_6402"
@@ -34,13 +33,15 @@ const Status = (props) => {
               />
             </g>
           </svg>
-          <div className="textStatus">לא תקין</div>
+          <div className="textStatus" style={{ color: "white" }}>
+            לא תקין
+          </div>
         </div>
       </div>
     );
   } else if (flagColor === "yellow") {
     return (
-      <div className="status" style={{ background: "rgb(243,174,105,0.4)" }}>
+      <div className="status" style={{ background: "#F49A40" }}>
         <div className="content">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -56,16 +57,16 @@ const Status = (props) => {
                 transform="translate(0 1.876)"
                 fill="white"
                 stroke="#f3ae69"
-                stroke-width="2"
+                strokeWidth="2"
               />
               <text
                 id="_"
                 data-name="?"
                 transform="translate(6.217 20)"
                 fill="#f3ae69"
-                font-size=" "
-                font-family="SimplerPro_HLAR-Black, SimplerPro_HLAR"
-                font-weight="800"
+                fontSize=" "
+                fontFamily="SimplerPro_HLAR-Black, SimplerPro_HLAR"
+                fontWeight="800"
               >
                 <tspan x="9" y="-2">
                   ?
@@ -73,13 +74,15 @@ const Status = (props) => {
               </text>
             </g>
           </svg>
-          <div className="textStatus">להתאמה</div>
+          <div className="textStatus" style={{ color: "white" }}>
+            להתאמה
+          </div>
         </div>
       </div>
     );
   } else {
     return (
-      <div className="status" style={{ background: "rgb(128,193,114,0.4)" }}>
+      <div className="status" style={{ background: "#71AA6F" }}>
         <div className="content">
           <div className="icon"></div>
           <svg
@@ -97,7 +100,7 @@ const Status = (props) => {
                 r="10.925"
                 fill="white"
                 stroke="#6eb85e"
-                stroke-width="2"
+                strokeWidth="2"
               />
               <path
                 id="Path_6404"
@@ -106,11 +109,13 @@ const Status = (props) => {
                 transform="translate(-141.539 -0.988)"
                 fill="#6eb85e"
                 stroke="#6eb85e"
-                stroke-width="0.5"
+                strokeWidth="0.5"
               />
             </g>
           </svg>
-          <div className="textStatus">תקין</div>
+          <div className="textStatus" style={{ color: "white" }}>
+            תקין
+          </div>
         </div>
       </div>
     );

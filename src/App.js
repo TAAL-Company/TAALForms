@@ -1,24 +1,231 @@
-import React from "react";
-import DataTable from "./components/DataTable";
-import "./App.css";
-import Status from "./components/Status";
-import taskpic from "./Pictures/taskpic.png";
+import React, { useState } from "react";
+import DataTableLTR from "./components/data_grid/DataTableLTR";
+import DataTableRTL from "./components/data_grid/DataTableRTL";
 
-//
+import "./App.css";
+import Status from "./components/classification_component/Status";
+import StatusLTR from "./components/classification_component/StatusLTR";
+
+import taskpic from "./Pictures/taskpic.png";
+import taskpic1 from "./Pictures/taskpic1.jpg";
+import taskpic2 from "./Pictures/taskpic2.jpeg";
+import taskpic3 from "./Pictures/taskpic3.jpg";
+import taskpic4 from "./Pictures/taskpic4.jpg";
+import taskpic5 from "./Pictures/taskpic5.jpeg";
+import taskpic6 from "./Pictures/taskpic6.jpeg";
+import taskpic7 from "./Pictures/taskpic7.jpg";
+
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
-import EqualizerIcon from "@mui/icons-material/Equalizer";
 import EditIcon from "@mui/icons-material/Edit";
-import MultipleSelectChip from "./components/MultipleSelectChip";
-import TestsComp from "./components/TestsComp";
-function App() {
-  //
+import { Select } from "@mui/material";
+import "flag-icon-css/css/flag-icon.min.css";
 
-  //
+//  future animation to popup
+// import Slide from "@mui/material/Slide";
+// import Draggable from "react-draggable";
+
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
+
+function App() {
+  const [explainationError, setExplainationError] = useState("");
+  const [interventionError, setinterventionError] = useState("");
+
+  const [selectedTable, setSelectedTable] = useState("flags");
+  const handleSelectTable = (table) => {
+    setSelectedTable(table);
+  };
+
+  const [explainationBorderColor, setExplainationBorderColor] =
+    useState("initial");
+  const [interventionBorderColor, setinterventionBorderColor] =
+    useState("initial");
+
+  const validateExplaination = (value) => {
+    if (value.length > 100) {
+      setExplainationError("Maximum length is 100 characters");
+      setExplainationBorderColor("red");
+    } else {
+      setExplainationError("");
+      setExplainationBorderColor("initial");
+    }
+  };
+
+  const validateintervention = (value) => {
+    if (!value) {
+      setinterventionError("Please enter a value");
+      setinterventionBorderColor("red");
+    } else if (value.length > 100) {
+      setinterventionError("Maximum length is 100 characters");
+      setinterventionBorderColor("red");
+    } else {
+      setinterventionError("");
+      setinterventionBorderColor("initial");
+    }
+  };
+
+  const handleDelete = (id) => {
+    console.log(id);
+    setRowsFlagsHE((prev) => prev.filter((row) => row.id !== id));
+    setRowsFlagsEN((prev) => prev.filter((row) => row.id !== id));
+  };
+
+  const handleEdit = (row) => {
+    // console.log(row);
+    setIsDialogOpen(true);
+    setCurrRow(row);
+    setInitialValuesRow(row);
+    setSlide(!slide);
+  };
+
+  const handleClose = () => {
+    setIsDialogOpen(false);
+    setSlide(!slide);
+  };
+
+  const handleSave = (data) => {
+    if (explainationError || interventionError) {
+      return;
+    }
+    const updatedRows = [...rowsFlagsHE];
+    let eyh = true;
+
+    for (let i = 0; i < rowsFlagsHE.length && eyh; i++) {
+      if (rowsFlagsHE[i].id === data.id) {
+        // console.log("true");
+        updatedRows[i] = data;
+        setRowsFlagsHE(updatedRows);
+        eyh = false;
+      }
+    }
+    setIsDialogOpen(false);
+    setSlide(!slide);
+  };
+
+  const handleSaveEN = (data) => {
+    if (explainationError || interventionError) {
+      return;
+    }
+    const updatedRowsEN = [...rowsFlagsEN];
+    let eyh = true;
+
+    for (let i = 0; i < rowsFlagsEN.length && eyh; i++) {
+      if (rowsFlagsEN[i].id === data.id) {
+        // console.log("true");
+        updatedRowsEN[i] = data;
+        setRowsFlagsEN(updatedRowsEN);
+        eyh = false;
+      }
+    }
+    setIsDialogOpen(false);
+    setSlide(!slide);
+  };
+
+  const handleReset = () => {
+    setCurrRow(initialValuesRow);
+    // setCurrRow({ ...currRow, Alternatives: initialValuesRow.Alternatives });
+  };
+
+  const fillFalse = (props) => {
+    console.log(`Setting ${props.groupingColumn}`);
+    console.log(`show:  ${props.show} `);
+
+    if (props.groupingColumn === "PrivateInfoEN") {
+      setRowsPrivateCardHE(
+        rowsPrivateCardHE.map((row) => ({
+          ...row,
+          // fieldHEPrivateCard: props.show ? "" : false,
+          xPrivateCard: props.show ? "" : false,
+          yPrivateCard: props.show ? "" : false,
+          fieldENPrivateCard: props.show ? "" : false,
+          classificationHEPrivateCard: props.show ? "" : false,
+        }))
+      );
+    } else if (props.groupingColumn === "HistoryEN") {
+      setRowsPrivateCardHE(
+        rowsPrivateCardHE.map((row) => ({
+          ...row,
+          beginningOfWorkPrivateCard: props.show ? "" : false,
+          employersPrivateCard: props.show ? "" : false,
+          reportsPrivateCard: props.show ? "" : false,
+          improvementPrivateCard: props.show ? "" : false,
+          interventionHEPrivateCard: props.show ? "" : false,
+        }))
+      );
+    } else if (props.groupingColumn === "LanguageComprehensionEN") {
+      setRowsTaskabilityHE(
+        rowsTaskabilityHE.map((row) => ({
+          ...row,
+          understandSpokenLanguageComprehension: props.show ? "" : false,
+          understandWrittenLanguageComprehension: props.show ? "" : false,
+        }))
+      );
+    } else if (props.groupingColumn === "LanguagesEN") {
+      setRowsTaskabilityHE(
+        rowsTaskabilityHE.map((row) => ({
+          ...row,
+          hebrew: props.show ? "" : false,
+          english: props.show ? "" : false,
+        }))
+      );
+    } else if (props.groupingColumn === "PrivateInfoHE") {
+      setRowsPrivateCardHE(
+        rowsPrivateCardHE.map((row) => ({
+          ...row,
+          // fieldHEPrivateCard: props.show ? "" : false,
+          xPrivateCard: props.show ? "" : false,
+          yPrivateCard: props.show ? "" : false,
+          fieldENPrivateCard: props.show ? "" : false,
+          classificationHEPrivateCard: props.show ? "" : false,
+        }))
+      );
+    } else if (props.groupingColumn === "HistoryHE") {
+      setRowsPrivateCardHE(
+        rowsPrivateCardHE.map((row) => ({
+          ...row,
+          beginningOfWorkPrivateCard: props.show ? "" : false,
+          employersPrivateCard: props.show ? "" : false,
+          reportsPrivateCard: props.show ? "" : false,
+          improvementPrivateCard: props.show ? "" : false,
+          interventionHEPrivateCard: props.show ? "" : false,
+        }))
+      );
+    } else if (props.groupingColumn === "LanguageComprehensionHE") {
+      setRowsTaskabilityHE(
+        rowsTaskabilityHE.map((row) => ({
+          ...row,
+          understandSpokenLanguageComprehension: props.show ? "" : false,
+          understandWrittenLanguageComprehension: props.show ? "" : false,
+        }))
+      );
+    } else if (props.groupingColumn === "LanguagesHE") {
+      setRowsTaskabilityHE(
+        rowsTaskabilityHE.map((row) => ({
+          ...row,
+          hebrew: props.show ? "" : false,
+          english: props.show ? "" : false,
+        }))
+      );
+    }
+  };
+
+  // jsonObj = { langueges: true, langueges1: false, langueges2: false };
+
+  // const [columnFillRows, setColumnFillRows] = useState({});
+
+  // setColumnFillRows((prev) => ({ ...prev, languages: false }));
+
+  // jsonObj.languages
 
   // columns and rows will be taken from DB
-  const columnsFlags = [
+  const [columnsFlagsHE, setColumnsFlagsHE] = useState([
     {
       field: "id",
       headerName: "ID",
@@ -31,7 +238,12 @@ function App() {
       field: "image",
       headerName: "",
       width: 100,
-      editable: true,
+      editable: false,
+      sortable: false,
+      disableExport: true,
+      filterable: false,
+      disableColumnMenu: true,
+
       renderCell: (params) => {
         return (
           <div>
@@ -39,8 +251,8 @@ function App() {
               src={params.row.image}
               alt=""
               style={{
-                "margin-right": "10px",
-                "margin-top": "4px",
+                marginRight: "10px",
+                marginTop: "4px",
                 width: "71px",
                 height: "45px",
                 borderRadius: "6px",
@@ -54,54 +266,36 @@ function App() {
       field: "task",
       headerName: "משימה",
       width: 150,
-      editable: true,
+      editable: false,
       headerAlign: "center",
-      align: "center",
+      align: "left",
+      renderCell: (params) => (
+        <div style={{ textAlign: "right", fontSize: "1rem" }}>
+          {params.row.task}
+        </div>
+      ),
     },
 
     {
       field: "classification",
       headerName: "סיווג",
       width: 140,
-      editable: true,
+      editable: false,
       renderCell: (params) => (
         <Status classification={params.row.classification} />
       ),
       headerAlign: "center",
-      align: "right",
+      align: "center",
     },
     {
       field: "intervention",
-      headerName: "התערבות",
+      headerName: "התאמה",
       width: 180,
-      editable: true,
+      editable: false,
       headerAlign: "center",
-      align: "center",
+      align: "left",
       renderCell: (params) => {
-        if (params.row.intervention === "no need") {
-          return (
-            <div
-              style={{
-                background: "rgb(220,220,220,0.7)",
-                width: "100%",
-                height: "100%",
-              }}
-            ></div>
-          );
-        } else {
-          return <div> {params.row.intervention}</div>;
-        }
-      },
-    },
-    {
-      field: "Alternatives",
-      headerName: "חלופיות",
-      width: 250,
-      editable: true,
-      headerAlign: "center",
-      align: "center",
-      renderCell: (params) => {
-        if (params.row.Alternatives === "no need") {
+        if (params.row.intervention === " ") {
           return (
             <div
               style={{
@@ -113,296 +307,620 @@ function App() {
           );
         } else {
           return (
-            <div className="alternativeBox">
-              <MultipleSelectChip
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  height: "100%",
-                  width: "50px",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  direction: "rtl",
-                }}
-              ></MultipleSelectChip>
+            <div style={{ textAlign: "right", fontSize: "1rem" }}>
+              {params.row.intervention}
             </div>
           );
         }
       },
     },
     {
-      field: "date",
-      headerName: "תאריך",
-      description: "This column has a value getter and is not sortable.",
-      width: 160,
+      field: "Alternatives",
+      headerName: "חלופה",
+      width: 250,
+      editable: false,
       headerAlign: "center",
-      align: "center",
+      align: "left",
+      renderCell: (params) => {
+        if (params.row.Alternatives === " ") {
+          return (
+            <div
+              style={{
+                background: "rgb(220,220,220,0.7)",
+                width: "100%",
+                height: "100%",
+              }}
+            ></div>
+          );
+        } else {
+          return (
+            <div style={{ textAlign: "right", fontSize: "1rem" }}>
+              {params.row.Alternatives}
+            </div>
+          );
+        }
+      },
     },
+
     {
-      field: "status",
-      headerName: "סטטוס",
-      width: 100,
+      field: "explaination",
+      headerName: "הסבר",
+      width: 250,
+      editable: false,
+      headerAlign: "center",
+      align: "left",
+      renderCell: (params) => (
+        <div style={{ textAlign: "right", fontSize: "1rem" }}>
+          {params.row.explaination}
+        </div>
+      ),
+    },
+
+    {
+      field: "actions",
+      headerName: "אפשרויות",
+      headerAlign: "left",
+      align: "left",
+      type: "actions",
+      direction: "rtl",
+      width: 470,
+      editable: false,
+      sortable: false,
+      disableExport: true,
+      getActions: (params) => {
+        let actions = [];
+
+        if (params.row.classification !== "green") {
+          actions.push(
+            <GridActionsCellItem
+              icon={<EditIcon style={{ fill: "gray" }} />}
+              label="Edit"
+              onClick={() => handleEdit(params.row)}
+              showInMenu
+            />
+          );
+        }
+
+        actions.push(
+          <GridActionsCellItem
+            icon={<DeleteIcon style={{ fill: "gray" }} />}
+            label="Delete"
+            onClick={() => handleDelete(params.id)}
+            showInMenu
+          />
+        );
+
+        return actions;
+      },
+    },
+  ]);
+
+  const [columnsFlagsEN, setColumnsFlagsEN] = useState([
+    {
+      field: "id",
+      headerName: "ID",
+      width: 90,
       editable: false,
       headerAlign: "center",
       align: "center",
     },
+    {
+      field: "image",
+      headerName: "",
+      width: 100,
+      editable: false,
+      sortable: false,
+      filterable: false,
+      disableExport: true,
+      disableColumnMenu: true,
+      renderCell: (params) => {
+        return (
+          <div>
+            <img
+              src={params.row.image}
+              alt=""
+              style={{
+                marginRight: "10px",
+                marginTop: "4px",
+                width: "71px",
+                height: "45px",
+                borderRadius: "6px",
+              }}
+            />
+          </div>
+        );
+      },
+    },
+    {
+      field: "task",
+      headerName: "Task",
+      width: 200,
+      editable: false,
+      headerAlign: "center",
+      align: "left",
+      renderCell: (params) => (
+        <div style={{ textAlign: "left", fontSize: "1rem" }}>
+          {params.row.task}
+        </div>
+      ),
+    },
 
-    // {
-    //   field: "optionsForSolution",
-    //   headerName: "אפשרויות",
-    //   width: 250,
-    //   editable: false,
-    //   type: "string",
-    //   headerAlign: "center",
-    //   align: "center",
-    //   renderCell: () => (
-    //     <div className="optionsBox">
-    //       <button
-    //         className="optionsBtn"
-    //         onClick={() => {
-    //           console.log("clicked");
-    //           const buttons = document.getElementById("opendButtons");
-    //           buttons.style.display = "flex";
-    //         }}
-    //       >
-    //         ...
-    //       </button>
-    //       <div id="opendButtons" className="opendButtons">
-    //         <button className="openedBtn" onClick={() => {}}>
-    //           b1
-    //         </button>
-    //         <button
-    //           className="openedBtn"
-    //           onClick={() => {
-    //             console.log("clicked");
-    //           }}
-    //         >
-    //           b2
-    //         </button>
-    //       </div>
-    //     </div>
-    //   ),
-    // },
+    {
+      field: "classification",
+      headerName: "Classification",
+      width: 160,
+      editable: false,
+      renderCell: (params) => (
+        <StatusLTR classification={params.row.classification} />
+      ),
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "intervention",
+      headerName: "Intervention",
+      width: 180,
+      editable: false,
+      headerAlign: "center",
+      align: "left",
+      renderCell: (params) => {
+        if (params.row.intervention === " ") {
+          return (
+            <div
+              style={{
+                background: "rgb(220,220,220,0.7)",
+                width: "100%",
+                height: "100%",
+              }}
+            ></div>
+          );
+        } else {
+          return (
+            <div style={{ textAlign: "left", fontSize: "1rem" }}>
+              {params.row.intervention}
+            </div>
+          );
+        }
+      },
+    },
+    {
+      field: "Alternatives",
+      headerName: "Alternatives",
+      width: 250,
+      editable: false,
+      headerAlign: "center",
+      align: "left",
+      renderCell: (params) => {
+        if (params.row.Alternatives === " ") {
+          return (
+            <div
+              style={{
+                background: "rgb(220,220,220,0.7)",
+                width: "100%",
+                height: "100%",
+              }}
+            ></div>
+          );
+        } else {
+          return (
+            <div style={{ textAlign: "left", fontSize: "1rem" }}>
+              {params.row.Alternatives}
+            </div>
+          );
+        }
+      },
+    },
+    {
+      field: "explaination",
+      headerName: "Explaination",
+      width: 250,
+      editable: false,
+      headerAlign: "center",
+      align: "left",
+      renderCell: (params) => (
+        <div style={{ textAlign: "left", fontSize: "1rem" }}>
+          {params.row.explaination}
+        </div>
+      ),
+
+      // renderCell: (params) =>
+      // params.row.explaination.length > 0 ? (
+      //   <div style={{ textAlign: "left", fontSize: "1rem" }}>
+      //     {params.row.explaination}
+      //   </div>
+      // ) : (
+      //   <div
+      //     style={{ textAlign: "center", fontSize: "0.8rem", color: "grey" }}
+      //   >
+      //     No explanation has been entered for this task
+      //   </div>
+      // ),
+    },
+
     {
       field: "actions",
+      headerName: "Actions",
+      headerAlign: "center",
+      align: "center",
       type: "actions",
-      align: "left",
-      width: 430,
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<DeleteIcon style={{ fill: "gray" }} />}
-          label="Delete"
-          // onClick={}
-        />,
-        <GridActionsCellItem
-          icon={<EqualizerIcon style={{ fill: "gray" }} />}
-          label="Toggle Admin"
-          // onClick={}
-          // showInMenu
-        />,
-        <GridActionsCellItem
-          icon={<EditIcon style={{ fill: "gray" }} />}
-          label="Edit"
+      width: 80,
+      editable: false,
+      sortable: false,
+      disableExport: true,
 
-          // onClick={}
-          // showInMenu
-        />,
-        // <GridActionsCellItem
-        //   icon={<FileCopyIcon />}
-        //   label="Duplicate User"
-        //   // onClick={}
-        //   showInMenu
-        // />,
-        <GridActionsCellItem
-          icon={<FileCopyIcon style={{ fill: "gray" }} />}
-          label="Duplicate User"
-          // onClick={}
-        />,
-        <GridActionsCellItem
-          icon={<FileCopyIcon style={{ fill: "gray" }} />}
-          label="Duplicate User"
-          // onClick={}
-          showInMenu
-        />,
-      ],
+      getActions: (params) => {
+        let actions = [];
+
+        if (params.row.classification !== "green") {
+          actions.push(
+            <GridActionsCellItem
+              className="grid-actions-cell"
+              icon={<EditIcon style={{ fill: "gray" }} />}
+              label="Edit"
+              onClick={() => handleEdit(params.row)}
+              showInMenu
+            />
+          );
+        }
+
+        actions.push(
+          <GridActionsCellItem
+            className="grid-actions-cell"
+            icon={<DeleteIcon style={{ fill: "gray" }} />}
+            label="Delete"
+            onClick={() => handleDelete(params.id)}
+            showInMenu
+          />
+        );
+
+        return actions;
+      },
     },
-    // {task
-    //   field: "needHelp",
-    //   headerName: "Need Help",
-    //   width: 150,
-    //   editable: false,
-    //   align: "center",
-    //   renderCell: (params) => <Status needHelp={params.row.needHelp} />,
-    // },
-  ];
+  ]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currRow, setCurrRow] = useState({});
+  const [initialValuesRow, setInitialValuesRow] = useState({});
 
-  const rowsFlags = [
+  const [slide, setSlide] = React.useState(false);
+  const [language, setLanguage] = useState("hebrew");
+
+  const [rowsFlagsHE, setRowsFlagsHE] = useState([
     {
       id: 1,
       image: taskpic,
       classification: "red",
-      task: "בדיקה",
-      intervention: "no need",
-      Alternatives: "",
-      date: "5/12/2020",
-      status: "פעיל",
-      optionsForSolution: "...",
+      task: "לבוש סינר",
+      intervention: " ",
+      Alternatives: "הסבר בקול",
+      explaination: "טקסט הסבר זה יוצג בהודעת עזרה לאחר לחיצה על כפתור העזרה.",
+      // date: "5/12/2020",
+      // status: "לא פעיל",
     },
     {
       id: 2,
-      image: taskpic,
+      image: taskpic1,
       classification: "yellow",
-      task: "לבוש סינר",
-      intervention: "לעזור בקשירת הסינר",
-      Alternatives: "no need",
+      task: "לנעול את חדר המחזור עם המפתח הירוק",
+      intervention: "טקסט מילולי על המפתח",
+      Alternatives: " ",
+      explaination: "טקסט הסבר זה יוצג בהודעת עזרה.",
 
-      date: "5/12/2020",
-      status: "פעיל",
-      optionsForSolution: "...",
+      // date: "5/12/2020",
+      // status: "לא פעיל",
     },
     {
       id: 3,
-      image: taskpic,
+      image: taskpic2,
       classification: "green",
-      task: "לבוש סינר",
-      intervention: "no need",
-      Alternatives: "no need",
+      task: "לנקות את הקופסאות ולייבש",
+      intervention: " ",
+      Alternatives: " ",
+      explaination: "טקסט הסבר זה יוצג בהודעת עזרה לאחר לחיצה על כפתור העזרה.",
 
-      date: "5/12/2020",
-      status: "פעיל",
-      optionsForSolution: "...",
+      // date: "5/12/2020",
+      // status: "לא פעיל",
     },
     {
       id: 4,
-      image: taskpic,
+      image: taskpic3,
       classification: "yellow",
-      task: "לבוש סינר",
-      intervention: "לעזור בקשירת הסינר",
-      Alternatives: "no need",
+      task: "לפזר גבינה על הפיצה",
+      intervention: "עזרה",
+      Alternatives: " ",
+      explaination: "טקסט הסבר זה יוצג בהודעת עזרה לאחר לחיצה על כפתור העזרה.",
 
-      date: "5/12/2020",
-      status: "פעיל",
-      optionsForSolution: "...",
+      // date: "5/12/2020",
+      // status: "לא פעיל",
     },
     {
       id: 5,
-      image: taskpic,
+      image: taskpic4,
       classification: "green",
-      task: "לבוש סינר",
-      intervention: "no need",
-      Alternatives: "no need",
+      task: "לנעול את חדר המחזור עם המפתח הירוק",
+      intervention: " ",
+      Alternatives: " ",
+      explaination: "טקסט הסבר זה יוצג בהודעת עזרה לאחר .",
 
-      date: "5/12/2020",
-      status: "פעיל",
-      optionsForSolution: "...",
+      // date: "5/12/2020",
+      // status: "לא פעיל",
     },
     {
       id: 6,
-      image: taskpic,
+      image: taskpic5,
       classification: "green",
-      task: "לבוש סינר",
-      intervention: "no need",
-      Alternatives: "no need",
+      task: "לשים תג שם על הסינר",
+      intervention: " ",
+      Alternatives: " ",
+      explaination: "טקסט הסבר זה יוצג בהודעת עזרה לאחר לחיצה.",
 
-      date: "5/12/2020",
-      status: "פעיל",
-      optionsForSolution: "...",
+      // date: "5/12/2020",
+      // status: "לא פעיל",
     },
     {
       id: 7,
-      image: taskpic,
+      image: taskpic6,
       classification: "red",
-      task: "לבוש סינר",
-      intervention: "no need",
-      Alternatives: "",
-      date: "5/12/2020",
-      status: "פעיל",
-      optionsForSolution: "...",
+      task: "לשטוף את המלפפונים בכיור",
+      intervention: " ",
+      Alternatives: "הסבר בקול",
+      // date: "5/12/2020",
+      // status: "לא פעיל",
+      explaination: "טקסט הסבר זה יוצג בהודעת עזרה.",
     },
     {
       id: 8,
-      image: taskpic,
+      image: taskpic7,
       classification: "yellow",
-      task: "לבוש סינר",
-      intervention: "לעזור בקשירת הסינר",
-      Alternatives: "no need",
+      task: "למיין את הבקבוקים שבשקית הכחולה",
+      intervention: "טקסט מילולי על השקית",
+      Alternatives: " ",
+      explaination: "טקסט הסבר זה יוצג בהודעת עזרה.",
 
-      date: "5/12/2020",
-      status: "פעיל",
-      optionsForSolution: "...",
+      // date: "5/12/2020",
+      // status: "פעיל",
     },
     {
       id: 9,
-      image: taskpic,
+      image: taskpic1,
       classification: "red",
-      task: "לבוש סינר",
-      intervention: "no need",
-      Alternatives: "",
-      date: "5/12/2020",
-      status: "פעיל",
-      optionsForSolution: "...",
+      task: "לנעול את חדר המחזור עם המפתח הירוק",
+      intervention: " ",
+      Alternatives: "הסבר בקול",
+      explaination: "טקסט הסבר זה יוצג בהודעת עזרה לאחר לחיצה על כפתור העזרה.",
+
+      // date: "5/12/2020",
+      // status: "פעיל",
     },
     {
       id: 10,
-      image: taskpic,
+      image: taskpic2,
       classification: "yellow",
-      task: "לבוש סינר",
-      intervention: "לעזור בקשירת הסינר",
-      Alternatives: "no need",
+      task: "לנקות את הקופסאות ולייבש",
+      intervention: "עזרה בההפעלה וכיבוי הברז",
+      Alternatives: " ",
+      explaination: "טקסט הסבר זה יוצג בהודעת עזרה לאחר לחיצה על כפתור העזרה.",
 
-      date: "5/12/2020",
-      status: "פעיל",
-      optionsForSolution: "...",
+      // date: "5/12/2020",
+      // status: "פעיל",
     },
     {
       id: 11,
-      image: taskpic,
+      image: taskpic3,
       classification: "green",
-      task: "לבוש סינר",
-      intervention: "no need",
-      Alternatives: "no need",
-
-      date: "5/12/2020",
-      status: "פעיל",
-      optionsForSolution: "...",
+      task: "לפזר גבינה על הפיצה",
+      intervention: " ",
+      Alternatives: " ",
+      explaination: "טקסט הסבר זה יוצג",
+      // date: "5/12/2020",
+      // status: "פעיל",
     },
     {
       id: 12,
-      image: taskpic,
+      image: taskpic4,
       classification: "red",
-      task: "לבוש סינר",
-      intervention: "no need",
-      Alternatives: "",
-      date: "5/12/2020",
-      status: "פעיל",
-      optionsForSolution: "...",
+      task: "לנעול את חדר המחזור עם המפתח הירוק",
+      intervention: " ",
+      Alternatives: "הסבר בקול",
+      explaination: "טקסט הסבר זה יוצג.",
+
+      // date: "5/12/2020",
+      // status: "פעיל",
     },
     {
       id: 13,
-      image: taskpic,
+      image: taskpic2,
       classification: "green",
-      task: "לבוש סינר",
-      intervention: "no need",
-      Alternatives: "no need",
-      date: "5/12/2020",
-      status: "פעיל",
-      optionsForSolution: "...",
+      task: "לנקות את הקופסאות ולייבש",
+      intervention: " ",
+      Alternatives: " ",
+      explaination: "טקסט הסבר זה יוצג בהודעת עזרה לאחר לחיצה על כפתור העזרה.",
+
+      // date: "5/12/2020",
+      // status: "פעיל",
     },
     {
       id: 14,
-      image: taskpic,
+      image: taskpic1,
       classification: "green",
-      task: "לבוש סינר",
-      intervention: "no need",
-      Alternatives: "no need",
-      date: "5/12/2020",
-      status: "פעיל",
-      optionsForSolution: "...",
+      task: "לנעול את חדר המחזור עם המפתח הירוק",
+      intervention: " ",
+      Alternatives: " ",
+      explaination: "טקסט הסבר.",
+
+      // date: "5/12/2020",
+      // status: "פעיל",
     },
-  ];
+  ]);
+
+  const [rowsFlagsEN, setRowsFlagsEN] = useState([
+    {
+      id: 1,
+      image: taskpic,
+      classification: "red",
+      task: "wearing an apron",
+      intervention: " ",
+      Alternatives: "tab",
+      // date: "5/12/2020",
+      // status: "לא פעיל",
+      explaination:
+        "helpful text, this will be showed on help msg after clicking the help button.",
+    },
+    {
+      id: 2,
+      image: taskpic1,
+      classification: "yellow",
+      task: "Lock the cycle room with the green key",
+      Alternatives: " ",
+      explaination: "helpful text, this will be showed on help message.",
+
+      // date: "5/12/2020",
+      // status: "לא פעיל",
+    },
+    {
+      id: 3,
+      image: taskpic2,
+      classification: "green",
+      task: "Clean the boxes and dry",
+      intervention: " ",
+      Alternatives: " ",
+      explaination: "",
+
+      // date: "5/12/2020",
+      // status: "לא פעיל",
+    },
+    {
+      id: 4,
+      image: taskpic3,
+      classification: "yellow",
+      task: "Put cheese on the pizza",
+      intervention: "helping",
+      Alternatives: " ",
+      explaination: "short text",
+
+      // date: "5/12/2020",
+      // status: "לא פעיל",
+    },
+    {
+      id: 5,
+      image: taskpic4,
+      classification: "green",
+      task: "Lock the cycle room with the green key",
+      intervention: " ",
+      Alternatives: " ",
+      explaination: "helpful text, this will be showed on help msg after.",
+
+      // date: "5/12/2020",
+      // status: "לא פעיל",
+    },
+    {
+      id: 6,
+      image: taskpic5,
+      classification: "green",
+      task: "Put a name tag on the apron",
+      intervention: " ",
+      Alternatives: " ",
+      explaination:
+        "helpful text, this will be showed on help msg after clicking.",
+
+      // date: "5/12/2020",
+      // status: "לא פעיל",
+    },
+    {
+      id: 7,
+      image: taskpic6,
+      classification: "red",
+      task: "Wash the cucumbers in the sink",
+      intervention: " ",
+      Alternatives: "tab",
+      // date: "5/12/2020",
+      // status: "לא פעיל",
+      explaination: "helpful text, this will be showed on help.",
+    },
+    {
+      id: 8,
+      image: taskpic7,
+      classification: "yellow",
+      task: "Sort the bottles inside the blue bag",
+      intervention: "helping",
+      Alternatives: " ",
+      explaination: "helpful text, this will be showed on help msg.",
+
+      // date: "5/12/2020",
+      // status: "פעיל",
+    },
+    {
+      id: 9,
+      image: taskpic1,
+      classification: "red",
+      task: "Lock the cycle room with the green key",
+      intervention: " ",
+      Alternatives: "tab",
+      // date: "5/12/2020",
+      // status: "פעיל",
+      explaination: "helpful text",
+    },
+    {
+      id: 10,
+      image: taskpic2,
+      classification: "yellow",
+      task: "Clean the boxes and dry",
+      intervention: "helping",
+      Alternatives: " ",
+      explaination:
+        "helpful text, this will be showed on help msg after clicking the help button.",
+
+      // date: "5/12/2020",
+      // status: "פעיל",
+    },
+    {
+      id: 11,
+      image: taskpic3,
+      classification: "green",
+      task: "Put cheese on the pizza",
+      intervention: " ",
+      Alternatives: " ",
+      explaination: "helpful text, this will.",
+
+      // date: "5/12/2020",
+      // status: "פעיל",
+    },
+    {
+      id: 12,
+      image: taskpic4,
+      classification: "red",
+      task: "Lock the cycle room with the green key",
+      intervention: " ",
+      Alternatives: "tab",
+      // date: "5/12/2020",
+      // status: "פעיל",
+      explaination: "helpful text, this will be showed.",
+    },
+    {
+      id: 13,
+      image: taskpic2,
+      classification: "green",
+      task: "Clean the boxes and dry",
+      intervention: " ",
+      Alternatives: " ",
+      // date: "5/12/2020",
+      // status: "פעיל",
+      explaination: "",
+    },
+    {
+      id: 14,
+      image: taskpic1,
+      classification: "green",
+      task: "Lock the cycle room with the green key",
+      intervention: " ",
+      Alternatives: " ",
+      // date: "5/12/2020",
+      // status: "פעיל",
+      explaination: "helpful text.",
+    },
+  ]);
 
   // cognitive profile
-  const columnsCognitive = [
+  const [columnsCognitiveHE, setColumnsCognitiveHE] = useState([
     {
       field: "id",
       headerName: "ID",
@@ -440,7 +958,7 @@ function App() {
       field: "grade",
       headerName: "מדד ציון",
       width: 150,
-      editable: true,
+      editable: false,
       headerAlign: "center",
       align: "center",
     },
@@ -486,87 +1004,27 @@ function App() {
       align: "center",
     },
 
-    // {
-    //   field: "optionsForSolution",
-    //   headerName: "אפשרויות",
-    //   width: 250,
-    //   editable: false,
-    //   type: "string",
-    //   headerAlign: "center",
-    //   align: "center",
-    //   renderCell: () => (
-    //     <div className="optionsBox">
-    //       <button
-    //         className="optionsBtn"
-    //         onClick={() => {
-    //           console.log("clicked");
-    //           const buttons = document.getElementById("opendButtons");
-    //           buttons.style.display = "flex";
-    //         }}
-    //       >
-    //         ...
-    //       </button>
-    //       <div id="opendButtons" className="opendButtons">
-    //         <button className="openedBtn" onClick={() => {}}>
-    //           b1
-    //         </button>
-    //         <button
-    //           className="openedBtn"
-    //           onClick={() => {
-    //             console.log("clicked");
-    //           }}
-    //         >
-    //           b2
-    //         </button>
-    //       </div>
-    //     </div>
-    //   ),
-    // },
     {
       field: "actions",
       type: "actions",
       width: 180,
       getActions: (params) => [
         <GridActionsCellItem
-          icon={<DeleteIcon style={{ fill: "gray" }} />}
-          label="Delete"
-          // onClick={}
-        />,
-        <GridActionsCellItem
-          icon={<EqualizerIcon style={{ fill: "gray" }} />}
-          label="Toggle Admin"
-          // onClick={}
-          // showInMenu
-        />,
-        <GridActionsCellItem
           icon={<EditIcon style={{ fill: "gray" }} />}
           label="Edit"
-
-          // onClick={}
-          // showInMenu
-        />,
-        // <GridActionsCellItem
-        //   icon={<FileCopyIcon />}
-        //   label="Duplicate User"
-        //   // onClick={}
-        //   showInMenu
-        // />,
-        <GridActionsCellItem
-          icon={<FileCopyIcon style={{ fill: "gray" }} />}
-          label="Duplicate User"
-          // onClick={}
-        />,
-        <GridActionsCellItem
-          icon={<FileCopyIcon style={{ fill: "gray" }} />}
-          label="Duplicate User"
-          // onClick={}
+          onClick={() => handleEdit(params.row)}
           showInMenu
         />,
+        // <GridActionsCellItem
+        //   icon={<DeleteIcon style={{ fill: "gray" }} />}
+        //   label="Delete"
+        //   showInMenu
+        // />,
       ],
     },
-  ];
+  ]);
 
-  const rowsCognitive = [
+  const [rowsCognitiveHE, setRowsCognitiveHE] = useState([
     {
       id: 1,
       fieldHE: "שפה 1",
@@ -577,7 +1035,6 @@ function App() {
       classificationHE: "שפה",
       classificationEN: "languege",
       MLFactor: "כן",
-      optionsForSolution: "...",
     },
     {
       id: 2,
@@ -589,7 +1046,6 @@ function App() {
       classificationHE: "שפה",
       classificationEN: "languege",
       MLFactor: "כן",
-      optionsForSolution: "...",
     },
     {
       id: 3,
@@ -601,7 +1057,6 @@ function App() {
       classificationHE: "שפה",
       classificationEN: "languege",
       MLFactor: "כן",
-      optionsForSolution: "...",
     },
     {
       id: 4,
@@ -613,7 +1068,6 @@ function App() {
       classificationHE: "שפה",
       classificationEN: "languege",
       MLFactor: "כן",
-      optionsForSolution: "...",
     },
     {
       id: 5,
@@ -625,7 +1079,6 @@ function App() {
       classificationHE: "שפה",
       classificationEN: "languege",
       MLFactor: "כן",
-      optionsForSolution: "...",
     },
     {
       id: 6,
@@ -637,7 +1090,6 @@ function App() {
       classificationHE: "שפה",
       classificationEN: "languege",
       MLFactor: "כן",
-      optionsForSolution: "...",
     },
     {
       id: 7,
@@ -649,7 +1101,6 @@ function App() {
       classificationHE: "שפה",
       classificationEN: "languege",
       MLFactor: "כן",
-      optionsForSolution: "...",
     },
     {
       id: 8,
@@ -661,8 +1112,6 @@ function App() {
       classificationHE: "שפה",
       classificationEN: "languege",
       MLFactor: "כן",
-
-      optionsForSolution: "...",
     },
     {
       id: 9,
@@ -674,8 +1123,6 @@ function App() {
       classificationHE: "שפה",
       classificationEN: "languege",
       MLFactor: "כן",
-
-      optionsForSolution: "...",
     },
     {
       id: 10,
@@ -687,8 +1134,6 @@ function App() {
       classificationHE: "שפה",
       classificationEN: "languege",
       MLFactor: "כן",
-
-      optionsForSolution: "...",
     },
     {
       id: 11,
@@ -700,8 +1145,6 @@ function App() {
       classificationHE: "שפה",
       classificationEN: "languege",
       MLFactor: "כן",
-
-      optionsForSolution: "...",
     },
     {
       id: 12,
@@ -713,8 +1156,6 @@ function App() {
       classificationHE: "שפה",
       classificationEN: "languege",
       MLFactor: "כן",
-
-      optionsForSolution: "...",
     },
     {
       id: 13,
@@ -726,16 +1167,14 @@ function App() {
       classificationHE: "שפה",
       classificationEN: "languege",
       MLFactor: "כן",
-
-      optionsForSolution: "...",
     },
-  ];
+  ]);
 
   // end of cognitive profile table
 
   // start of כרטסת אישית
 
-  const columnsPrivateCard = [
+  const [columnsPrivateCardHE, setColumnsPrivateCardHE] = useState([
     {
       field: "id",
       headerName: "ID",
@@ -773,7 +1212,7 @@ function App() {
       field: "fieldENPrivateCard",
       headerName: "field - English",
       width: 150,
-      editable: true,
+      editable: false,
       headerAlign: "center",
       align: "center",
     },
@@ -814,7 +1253,7 @@ function App() {
       field: "improvementPrivateCard",
       headerName: "שיפור",
       width: 90,
-      editable: true,
+      editable: false,
       headerAlign: "center",
       align: "center",
     },
@@ -830,7 +1269,7 @@ function App() {
     //   field: "interventionHEPrivateCard",
     //   headerName: "possible intervention",
     //   width: 180,
-    //   editable: true,
+    //   editable: false,
     //   headerAlign: "center",
     //   align: "center",
     // },
@@ -840,45 +1279,16 @@ function App() {
       width: 180,
       getActions: (params) => [
         <GridActionsCellItem
-          icon={<DeleteIcon style={{ fill: "gray" }} />}
-          label="Delete"
-          // onClick={}
-        />,
-        <GridActionsCellItem
-          icon={<EqualizerIcon style={{ fill: "gray" }} />}
-          label="Toggle Admin"
-          // onClick={}
-          // showInMenu
-        />,
-        <GridActionsCellItem
           icon={<EditIcon style={{ fill: "gray" }} />}
           label="Edit"
-
-          // onClick={}
-          // showInMenu
-        />,
-        // <GridActionsCellItem
-        //   icon={<FileCopyIcon />}
-        //   label="Duplicate User"
-        //   // onClick={}
-        //   showInMenu
-        // />,
-        <GridActionsCellItem
-          icon={<FileCopyIcon style={{ fill: "gray" }} />}
-          label="Duplicate User"
-          // onClick={}
-        />,
-        <GridActionsCellItem
-          icon={<FileCopyIcon style={{ fill: "gray" }} />}
-          label="Duplicate User"
-          // onClick={}
+          onClick={() => handleEdit(params.row)}
           showInMenu
         />,
       ],
     },
-  ];
+  ]);
 
-  const rowsPrivateCard = [
+  const [rowsPrivateCardHE, setRowsPrivateCardHE] = useState([
     {
       id: 1,
       fieldHEPrivateCard: "שם פרטי",
@@ -1107,10 +1517,10 @@ function App() {
       reportsPrivateCard: "",
       improvementPrivateCard: "",
     },
-  ];
+  ]);
 
   // taskability
-  const columnsTaskability = [
+  const [columnsTaskabilityHE, setColumnsTaskabilityHE] = useState([
     {
       field: "id",
       headerName: "ID",
@@ -1120,7 +1530,7 @@ function App() {
       align: "center",
     },
     {
-      field: "tasks",
+      field: "taskTaskabilityHE",
       headerName: "משימות",
       width: 180,
       editable: false,
@@ -1136,7 +1546,7 @@ function App() {
       align: "center",
     },
     {
-      field: "English",
+      field: "english",
       headerName: "אנגלית",
       width: 90,
       editable: false,
@@ -1144,7 +1554,7 @@ function App() {
       align: "center",
     },
     {
-      field: "task",
+      field: "usesAB",
       headerName: 'משתמש ב א"ב',
       width: 150,
       editable: false,
@@ -1152,7 +1562,7 @@ function App() {
       align: "center",
     },
     {
-      field: "2",
+      field: "understandSpokenLanguageComprehension",
       headerName: "הבנת שפה דבורה",
       width: 150,
       editable: false,
@@ -1160,7 +1570,7 @@ function App() {
       align: "center",
     },
     {
-      field: "3",
+      field: "understandWrittenLanguageComprehension",
       headerName: "הבנת שפה כתובה",
       width: 150,
       editable: false,
@@ -1168,7 +1578,7 @@ function App() {
       align: "center",
     },
     {
-      field: "4",
+      field: "abilityExpressOrally",
       headerName: 'יכולת ביטוי בע"פ',
       width: 150,
       editable: false,
@@ -1176,7 +1586,7 @@ function App() {
       align: "center",
     },
     {
-      field: "6",
+      field: "abilityExpressWriting",
       headerName: "יכולת ביטוי בכתב",
       width: 150,
       editable: false,
@@ -1184,7 +1594,7 @@ function App() {
       align: "center",
     },
     {
-      field: "7",
+      field: "fluentReading",
       headerName: "קריאה שוטפת",
       width: 120,
       editable: false,
@@ -1192,7 +1602,7 @@ function App() {
       align: "center",
     },
     {
-      field: "8",
+      field: "writeSingleAndFamiliarWords",
       headerName: "כותב מילים בודדות ומוכרות",
       width: 220,
       editable: false,
@@ -2001,57 +2411,36 @@ function App() {
       align: "center",
     },
     {
-      field: "actionsPrivateCard",
+      field: "actionsTaskabilityHE",
       type: "actions",
       width: 180,
       getActions: (params) => [
         <GridActionsCellItem
-          icon={<DeleteIcon style={{ fill: "gray" }} />}
-          label="Delete"
-          // onClick={}
-        />,
-        <GridActionsCellItem
-          icon={<EqualizerIcon style={{ fill: "gray" }} />}
-          label="Toggle Admin"
-          // onClick={}
-          // showInMenu
-        />,
-        <GridActionsCellItem
           icon={<EditIcon style={{ fill: "gray" }} />}
           label="Edit"
-
-          // onClick={}
-          // showInMenu
-        />,
-        // <GridActionsCellItem
-        //   icon={<FileCopyIcon />}
-        //   label="Duplicate User"
-        //   // onClick={}
-        //   showInMenu
-        // />,
-        <GridActionsCellItem
-          icon={<FileCopyIcon style={{ fill: "gray" }} />}
-          label="Duplicate User"
-          // onClick={}
+          showInMenu
         />,
         <GridActionsCellItem
-          icon={<FileCopyIcon style={{ fill: "gray" }} />}
-          label="Duplicate User"
-          // onClick={}
+          icon={<DeleteIcon style={{ fill: "gray" }} />}
+          label="Delete"
           showInMenu
         />,
       ],
     },
-  ];
+  ]);
 
-  const rowsTaskability = [
+  const [rowsTaskabilityHE, setRowsTaskabilityHE] = useState([
     {
       id: 1,
       tasks: "לבוש מתאים",
+      hebrew: "4A",
+      english: "1C",
     },
     {
       id: 2,
       tasks: "מסיכה",
+      hebrew: "3c",
+      english: "1b",
     },
 
     {
@@ -2122,61 +2511,859 @@ function App() {
       id: 19,
       tasks: "הפיצה מוכנה לתנור",
     },
-  ];
+  ]);
   // until here will be from DB
+
+  // const Transition = React.forwardRef(function Transition(props, ref) {
+  //   return <Slide direction="up" ref={ref} {...props} />;
+  // });
+
+  // const validate = (fieldValues = values) => {
+  //   let temp = { ...errors };
+  //   if ("task" in fieldValues)
+  //     temp.task = fieldValues.fullName ? "" : "This field is required.";
+  //   if ("intervention" in fieldValues)
+  //     temp.intervention = fieldValues.intervention
+  //       ? ""
+  //       : "This field is required.";
+  //   if ("Alternative" in fieldValues) {
+  //     temp.Alternative = fieldValues.Alternative
+  //       ? ""
+  //       : "This field is required.";
+  //   }
+  //   if ("image" in fieldValues) {
+  //     temp.image = fieldValues.image ? "" : "This field is required.";
+  //   }
+  //   setErrors({
+  //     ...temp,
+  //   });
+
+  //   if (fieldValues == values) return Object.values(temp).every((x) => x == "");
+  // };
 
   return (
     <div className="App">
-      <div className="headline">Flags</div>
-      <div className="table">
-        <DataTable
-          columns={columnsFlags}
-          rows={rowsFlags}
-          headers={["try"]}
-          groups={1}
-          marginSearchBar={198}
-        />
-      </div>
-      <br></br>
+      <div>
+        <div>
+          <button
+            className={`switch-button ${
+              language === "hebrew" ? "hebrew" : "english"
+            }`}
+            onClick={() =>
+              setLanguage(language === "hebrew" ? "english" : "hebrew")
+            }
+          >
+            {/* {language === "hebrew" ? "HE" : "EN"} */}
+            {language === "hebrew" ? (
+              <>
+                <i className="flag-icon flag-icon-il"></i>
+                <h4 style={{ marginLeft: "3px" }}>HE</h4>
+              </>
+            ) : (
+              <>
+                <i className="flag-icon flag-icon-us"></i>
+                <h4 style={{ marginLeft: "3px" }}>EN</h4>
+              </>
+            )}
+          </button>
+        </div>
 
-      <br></br>
-      <br></br>
-      <br></br>
-      <div className="headline">Cogntive Profile</div>
-      <div className="table">
-        <DataTable
-          columns={columnsCognitive}
-          rows={rowsCognitive}
-          headers={["try"]}
-          groups={1}
-          marginSearchBar={855}
-        />
-      </div>
+        {language === "hebrew" ? (
+          <>
+            <div className="Navbar" style={{ direction: "rtl" }}>
+              <nav>
+                <button
+                  className="btn_nav"
+                  onClick={() => handleSelectTable("flags")}
+                >
+                  דגלים
+                </button>
+                <button
+                  className="btn_nav"
+                  onClick={() => handleSelectTable("privateCard")}
+                >
+                  כרטסת אישית
+                </button>
+                <button
+                  className="btn_nav"
+                  onClick={() => handleSelectTable("cognitiveProfile")}
+                >
+                  פרופיל קוגנטיבי
+                </button>
+                <button
+                  className="btn_nav"
+                  onClick={() => handleSelectTable("taskability")}
+                >
+                  דרישות למשימה
+                </button>
+              </nav>
+            </div>
+            {selectedTable === "flags" && (
+              <div>
+                <div className="headline">דגלים</div>
+                <div className="table">
+                  {isDialogOpen && (
+                    // <Draggable>
+                    <Dialog
+                      open={isDialogOpen}
+                      onClose={handleClose}
+                      aria-labelledby={"alert-dialog-slide-title"}
+                      aria-describedby={"alert-dialog-slide-description"}
+                      // TransitionComponent={Transition}
+                      // keepMounted={slide}
+                      // transitionDuration={300}
+                      disableEscapeKeyDown
+                      // style={{ direction: "rtl" }}
+                      // style={{ position: "absolute", top: "0", right: "0" }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                        }}
+                      >
+                        <DialogActions
+                          style={{ direction: "rtl", flexGrow: 1 }}
+                        >
+                          <Button onClick={handleClose}>X</Button>
+                        </DialogActions>
 
-      <br></br>
-      <br></br>
-      <div className="headline">כרטסת אישית</div>
-      <div className="table">
-        <DataTable
-          columns={columnsPrivateCard}
-          rows={rowsPrivateCard}
-          headers={["היסטוריה", "פרטים אישיים"]}
-          groups={2}
-          marginSearchBar={325}
-        />
-      </div>
+                        <DialogTitle id="form-dialog-title">
+                          עריכת משימה
+                        </DialogTitle>
+                      </div>
+                      <DialogContent dividers>
+                        <div
+                          className="firstRow"
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <TextField
+                            autoFocus
+                            margin="dense"
+                            id="task"
+                            label="Task"
+                            type="text"
+                            value={currRow.task}
+                            onChange={(e) =>
+                              setCurrRow({ ...currRow, task: e.target.value })
+                            }
+                            style={{ width: "75%" }}
+                            disabled
+                          />
+                          <img
+                            src={currRow.image}
+                            alt=""
+                            style={{
+                              marginLeft: "20px",
+                              marginTop: "4px",
+                              width: "88px",
+                              height: "56px",
+                              borderRadius: "3px",
+                            }}
+                          />
+                        </div>
+                        <TextField
+                          margin="dense"
+                          id="classification"
+                          label="Classification"
+                          type="text"
+                          value={currRow.classification}
+                          onChange={(e) =>
+                            setCurrRow({
+                              ...currRow,
+                              classification: e.target.value,
+                            })
+                          }
+                          fullWidth
+                          disabled
+                        />
 
-      <br></br>
-      <br></br>
-      <div className="headline">Taskability</div>
-      <div className="table">
-        <DataTable
-          columns={columnsTaskability}
-          rows={rowsTaskability}
-          headers={["try"]}
-          groups={1}
-          marginSearchBar={855}
-        />
+                        {currRow.intervention !== " " && (
+                          <TextField
+                            margin="dense"
+                            id="intervention"
+                            label="intervention"
+                            type="text"
+                            value={currRow.intervention}
+                            onChange={(e) => {
+                              setCurrRow({
+                                ...currRow,
+                                intervention: e.target.value,
+                              });
+                              validateintervention(e.target.value);
+                            }}
+                            error={Boolean(interventionError)}
+                            helperText={interventionError}
+                            style={{ borderColor: interventionBorderColor }}
+                            fullWidth
+                          />
+                        )}
+
+                        {currRow.intervention === " " && (
+                          <TextField
+                            margin="dense"
+                            id="intervention"
+                            label="intervention"
+                            type="text"
+                            value={"שדה זה זמין רק כאשר הסיווג הוא צהוב"}
+                            style={{
+                              borderColor: interventionBorderColor,
+                            }}
+                            fullWidth
+                            disabled
+                          />
+                        )}
+
+                        {currRow.Alternatives === " " && (
+                          <Select
+                            native
+                            value={"שדה זה זמין רק כאשר הסיווג הוא אדום"}
+                            id="select-Alternatives"
+                            label="Alternatives"
+                            fullWidth
+                            style={{ direction: "rtl" }}
+                            disabled
+                          >
+                            {" "}
+                            <option
+                              value={"שדה זה זמין רק כאשר הסיווג הוא אדום"}
+                            >
+                              שדה זה זמין רק כאשר הסיווג הוא אדום
+                            </option>
+                          </Select>
+                        )}
+
+                        {currRow.Alternatives !== " " && (
+                          <Select
+                            native
+                            value={currRow.Alternatives.toString()}
+                            id="select-Alternatives"
+                            label="Alternatives"
+                            fullWidth
+                            onChange={(e) =>
+                              setCurrRow({
+                                ...currRow,
+                                Alternatives: e.target.value,
+                              })
+                            }
+                            style={{ direction: "rtl" }}
+                          >
+                            {/* <option aria-label="None" value="" /> */}
+                            <optgroup label="כותב מילים בודדות לא מוכרות">
+                              <option value={"מדבקות מוכנות"}>
+                                מדבקות מוכנות
+                              </option>
+                              <option value={"כרטיסיה"}>כרטיסיה</option>
+                              <option value={"צורות"}>צורות</option>
+                            </optgroup>
+                            <optgroup label="רגישות יתר במישוש">
+                              <option value={"כפפה"}>כפפה</option>
+                              <option value={"מטלית"}>מטלית</option>
+                            </optgroup>
+                            <optgroup label="מזהה צבעים מורכבים">
+                              <option value={"ציור"}>ציור</option>
+                              <option value={"סמלול"}>סמלול</option>
+                              <option value={"הסבר בקול"}>הסבר בקול</option>
+                            </optgroup>{" "}
+                            <optgroup label="מזהה צורות מורכבות">
+                              <option value={"ציור"}>ציור</option>
+                              <option value={"סמלול"}>סמלול</option>
+                              <option value={"הסבר בקול"}>הסבר בקול</option>
+                            </optgroup>{" "}
+                            <optgroup label="פיצול קשב (dividing)">
+                              <option value={"חדר שקט"}>חדר שקט</option>
+                              <option value={"הפסקה"}>הפסקה</option>
+                            </optgroup>{" "}
+                            <optgroup label="זיכרון לטווח קצר (30 שניות)">
+                              <option value={"חזרה על משימה"}>
+                                חזרה על משימה
+                              </option>
+                              <option value={"תזכורות באפליקציה"}>
+                                תזכורות באפליקציה
+                              </option>
+                              <option value={"רשימה מודפסת"}>
+                                רשימה מודפסת
+                              </option>
+                            </optgroup>{" "}
+                            <optgroup label="זיהוי צורות (דו מימד)">
+                              <option value={"ציור"}>ציור</option>
+                              <option value={"סמלול"}>סמלול</option>
+                              <option value={"הסבר בקול"}>הסבר בקול</option>
+                            </optgroup>{" "}
+                            <optgroup label="מזהה אנשים (פנים ושם)">
+                              <option value={"צילום"}>צילום</option>
+                              <option value={"כרטסת מודפסת"}>
+                                כרטסת מודפסת
+                              </option>
+                            </optgroup>
+                            <optgroup label="מזהה תמונות">
+                              <option value={"ציור"}>ציור</option>
+                              <option value={"סמלול"}>סמלול</option>
+                              <option value={"הסבר בקול"}>הסבר בקול</option>
+                            </optgroup>
+                            <optgroup label="מזהה סמלים גרפיים פשוטים">
+                              <option value={"ציור"}>ציור</option>
+                              <option value={"סמלול"}>סמלול</option>
+                              <option value={"הסבר בקול"}>הסבר בקול</option>
+                            </optgroup>
+                            <optgroup label="מזהה איקונים">
+                              <option value={"ציור"}>ציור</option>
+                              <option value={"סמלול"}>סמלול</option>
+                              <option value={"הסבר בקול"}>הסבר בקול</option>
+                            </optgroup>
+                            <optgroup label="זהירות בשימוש בחומרים מסוכנים">
+                              <option value={"הוספת אמצעי הגנה"}>
+                                הוספת אמצעי הגנה
+                              </option>
+                              <option value={"הרחקה"}>הרחקה</option>
+                              <option value={"הוספת אזהרה"}>הוספת אזהרה</option>
+                            </optgroup>
+                            <optgroup label="זהירות שימוש בעצמים חדים">
+                              <option value={"הוספת אמצעי הגנה"}>
+                                הוספת אמצעי הגנה
+                              </option>
+                              <option value={"הרחקה"}>הרחקה</option>
+                              <option value={"הוספת אזהרה"}>הוספת אזהרה</option>
+                            </optgroup>
+                            <optgroup label="זהירות שימוש במכשירי חשמל">
+                              <option value={"הוספת אמצעי הגנה"}>
+                                הוספת אמצעי הגנה
+                              </option>
+                              <option value={"הרחקה"}>הרחקה</option>
+                              <option value={"הוספת אזהרה"}>הוספת אזהרה</option>
+                            </optgroup>
+                            <optgroup label="עמידה לאורך זמן מחולשת רגליים">
+                              <option value={"ישיבה על כיסא"}>
+                                ישיבה על כיסא
+                              </option>
+                              <option value={"הפסקות כל 10 דקות"}>
+                                הפסקות כל 10 דקות
+                              </option>
+                              <option value={"שינוי מנח לאורך הפעילות"}>
+                                שינוי מנח לאורך הפעילות
+                              </option>
+                            </optgroup>
+                            <optgroup label="זיהוי מקום והתמצאות במרחב">
+                              <option value={"שלטים עם מלל"}>
+                                שלטים עם מלל
+                              </option>
+                              <option value={"תמונות"}>תמונות </option>
+                              <option value={"הסבר בקול"}>הסבר בקול</option>
+                            </optgroup>
+                            <optgroup label="עיוורון צבעים">
+                              <option value={"שיטת מיון שונה"}>
+                                שיטת מיון שונה
+                              </option>
+                              <option value={"הסבר בקול"}>הסבר בקול</option>
+                              <option value={"בקרה חיצונית"}>
+                                בקרה חיצונית
+                              </option>
+                            </optgroup>
+                          </Select>
+                        )}
+
+                        <TextField
+                          margin="dense"
+                          id="explaination"
+                          label="Explaination"
+                          type="text"
+                          value={currRow.explaination}
+                          onChange={(e) => {
+                            setCurrRow({
+                              ...currRow,
+                              explaination: e.target.value,
+                            });
+                            validateExplaination(e.target.value);
+                          }}
+                          error={Boolean(explainationError)}
+                          helperText={explainationError}
+                          style={{ borderColor: explainationBorderColor }}
+                          fullWidth
+                        />
+                      </DialogContent>
+                      <DialogActions style={{ direction: "rtl" }}>
+                        <Button onClick={handleReset}>איפוס</Button>
+                        <Button onClick={() => handleSave(currRow)}>
+                          שמור
+                        </Button>
+                        {/* <Button onClick={handleClose}>X</Button> */}
+                      </DialogActions>
+                    </Dialog>
+                    // </Draggable>
+                  )}
+                  <DataTableRTL
+                    tableType={"FlagsHE"}
+                    columns={columnsFlagsHE}
+                    setColumns={setColumnsFlagsHE}
+                    rows={rowsFlagsHE}
+                    isInfo={true}
+                    fillFalse={fillFalse}
+                  />
+                </div>
+              </div>
+            )}
+
+            {selectedTable === "cognitiveProfile" && (
+              <div>
+                <div className="headline">פרופיל קוגנטיבי</div>
+                <div className="table">
+                  <DataTableRTL
+                    tableType={"CognitiveProfileHE"}
+                    columns={columnsCognitiveHE}
+                    setColumns={setColumnsCognitiveHE}
+                    rows={rowsCognitiveHE}
+                    isInfo={false}
+                    fillFalse={fillFalse}
+                  />
+                </div>
+              </div>
+            )}
+
+            {selectedTable === "privateCard" && (
+              <div>
+                <div className="headline">כרטסת אישית</div>
+                <div className="table">
+                  <DataTableRTL
+                    tableType={"PrivateCardHE"}
+                    columns={columnsPrivateCardHE}
+                    setColumns={setColumnsPrivateCardHE}
+                    rows={rowsPrivateCardHE}
+                    isInfo={false}
+                    fillFalse={fillFalse}
+                  />
+                </div>
+              </div>
+            )}
+
+            {selectedTable === "taskability" && (
+              <div>
+                <div className="headline">דרישות למשימה</div>
+                <div className="table">
+                  <DataTableRTL
+                    tableType={"TaskabilityHE"}
+                    columns={columnsTaskabilityHE}
+                    setColumns={setColumnsTaskabilityHE}
+                    rows={rowsTaskabilityHE}
+                    isInfo={false}
+                    fillFalse={fillFalse}
+                  />
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="Navbar">
+              <nav>
+                <button
+                  className="btn_nav"
+                  onClick={() => handleSelectTable("flags")}
+                >
+                  Flags
+                </button>
+                <button
+                  className="btn_nav"
+                  onClick={() => handleSelectTable("privateCard")}
+                >
+                  Priavte Card
+                </button>
+                <button
+                  className="btn_nav"
+                  onClick={() => handleSelectTable("cognitiveProfile")}
+                >
+                  Cogntive Profile
+                </button>
+                <button
+                  className="btn_nav"
+                  onClick={() => handleSelectTable("taskability")}
+                >
+                  Taskability
+                </button>
+              </nav>
+            </div>
+            {selectedTable === "flags" && (
+              <div>
+                <div className="headline">Flags</div>
+                <div className="table">
+                  {isDialogOpen && (
+                    // <Draggable>
+                    <Dialog
+                      open={isDialogOpen}
+                      onClose={handleClose}
+                      aria-labelledby={"alert-dialog-slide-title"}
+                      aria-describedby={"alert-dialog-slide-description"}
+                      // TransitionComponent={Transition}
+                      // keepMounted={slide}
+                      // transitionDuration={300}
+                      disableEscapeKeyDown
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                        }}
+                      >
+                        <DialogTitle id="form-dialog-title">
+                          Edit Flag
+                        </DialogTitle>
+                        <DialogActions
+                          style={{ direction: "ltr", flexGrow: 1 }}
+                        >
+                          <Button onClick={handleClose}>X</Button>
+                        </DialogActions>
+                      </div>
+
+                      <DialogContent dividers>
+                        <div
+                          className="firstRow"
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                          fullWidth
+                        >
+                          <TextField
+                            autoFocus
+                            margin="dense"
+                            id="task"
+                            label="Task"
+                            type="text"
+                            value={currRow.task}
+                            onChange={(e) =>
+                              setCurrRow({ ...currRow, task: e.target.value })
+                            }
+                            style={{ width: "75%" }}
+                            disabled
+                          />
+                          <img
+                            src={currRow.image}
+                            alt=""
+                            style={{
+                              marginLeft: "20px",
+                              marginTop: "4px",
+                              width: "88px",
+                              height: "56px",
+                              borderRadius: "3px",
+                            }}
+                          />
+                        </div>
+                        <TextField
+                          margin="dense"
+                          id="classification"
+                          label="Classification"
+                          type="text"
+                          value={currRow.classification}
+                          onChange={(e) =>
+                            setCurrRow({
+                              ...currRow,
+                              classification: e.target.value,
+                            })
+                          }
+                          fullWidth
+                          disabled
+                        />
+
+                        {currRow.intervention !== " " && (
+                          <TextField
+                            margin="dense"
+                            id="intervention"
+                            label="intervention"
+                            type="text"
+                            value={currRow.intervention}
+                            onChange={(e) => {
+                              setCurrRow({
+                                ...currRow,
+                                intervention: e.target.value,
+                              });
+                              validateintervention(e.target.value);
+                            }}
+                            error={Boolean(interventionError)}
+                            helperText={interventionError}
+                            style={{ borderColor: interventionBorderColor }}
+                            fullWidth
+                          />
+                        )}
+
+                        {currRow.intervention === " " && (
+                          <TextField
+                            margin="dense"
+                            id="intervention"
+                            label="intervention"
+                            type="text"
+                            value={
+                              "This field is available only when classification is yellow"
+                            }
+                            style={{
+                              borderColor: interventionBorderColor,
+                            }}
+                            fullWidth
+                            disabled
+                          />
+                        )}
+
+                        {currRow.Alternatives === " " && (
+                          <Select
+                            native
+                            value={
+                              "This field is available only when classification is red"
+                            }
+                            id="select-Alternatives"
+                            label="Alternatives"
+                            fullWidth
+                            disabled
+                          >
+                            {" "}
+                            <option
+                              value={
+                                "This field is available only when classification is red"
+                              }
+                            >
+                              This field is available only when classification
+                              is red
+                            </option>
+                          </Select>
+                        )}
+
+                        {currRow.Alternatives !== " " && (
+                          <Select
+                            native
+                            value={currRow.Alternatives.toString()}
+                            id="select-Alternatives"
+                            label="Alternatives"
+                            fullWidth
+                            onChange={(e) =>
+                              setCurrRow({
+                                ...currRow,
+                                Alternatives: e.target.value,
+                              })
+                            }
+                          >
+                            {/* <option aria-label="None" value="" /> */}
+                            <optgroup label="writes single unfamiliar words">
+                              <option value={"Ready stickers"}>
+                                Ready stickers
+                              </option>
+                              <option value={"tab"}>tab</option>
+                              <option value={"Shapes"}>Shapes</option>
+                            </optgroup>
+                            <optgroup label="hypersensitivity to touch">
+                              <option value={"Glove"}>Glove</option>
+                              <option value={"cloth"}>cloth</option>
+                            </optgroup>
+                            <optgroup label="Complex Color ID">
+                              <option value={"Drawing"}>Drawing</option>
+                              <option value={"symbol"}>symbol</option>
+                              <option value={"Explain with voice"}>
+                                Explain with voice
+                              </option>
+                            </optgroup>{" "}
+                            <optgroup label="complex shape identifier">
+                              <option value={"Drawing"}>Drawing</option>
+                              <option value={"symbol"}>symbol</option>
+                              <option value={"Explain with voice"}>
+                                Explain with voice
+                              </option>
+                            </optgroup>{" "}
+                            <optgroup label="dividing">
+                              <option value={"Quiet room"}>Quiet room</option>
+                              <option value={"Pause"}>Pause</option>
+                            </optgroup>{" "}
+                            <optgroup label="Short-term memory (30 seconds)">
+                              <option value={"Task repetition"}>
+                                Task repetition
+                              </option>
+                              <option value={"Reminders in the app"}>
+                                Reminders in the app
+                              </option>
+                              <option value={"printed list"}>
+                                printed list
+                              </option>
+                            </optgroup>{" "}
+                            <optgroup label="Shape recognition (2D)">
+                              <option value={"Drawing"}>Drawing</option>
+                              <option value={"symbol"}>symbol</option>
+                              <option value={"Explain with voice"}>
+                                Explain with voice
+                              </option>
+                            </optgroup>{" "}
+                            <optgroup label="People ID (face and name)">
+                              <option value={"photograph"}>photograph</option>
+                              <option value={"on a printed card"}>
+                                on a printed card
+                              </option>
+                            </optgroup>
+                            <optgroup label="image ID">
+                              <option value={"Drawing"}>Drawing</option>
+                              <option value={"symbol"}>symbol</option>
+                              <option value={"Explain with voice"}>
+                                Explain with voice
+                              </option>
+                            </optgroup>
+                            <optgroup label="simple graphic symbol identifier">
+                              <option value={"Drawing"}>Drawing</option>
+                              <option value={"symbol"}>symbol</option>
+                              <option value={"Explain with voice"}>
+                                Explain with voice
+                              </option>
+                            </optgroup>
+                            <optgroup label="Icon ID">
+                              <option value={"Drawing"}>Drawing</option>
+                              <option value={"symbol"}>symbol</option>
+                              <option value={"Explain with voice"}>
+                                Explain with voice
+                              </option>
+                            </optgroup>
+                            <optgroup label="Caution in the use of hazardous materials">
+                              <option value={"Add protection measures"}>
+                                Add protection measures
+                              </option>
+                              <option value={"Exclusion"}>Exclusion</option>
+                              <option value={"Add warning"}>Add warning</option>
+                            </optgroup>
+                            <optgroup label="Caution use of sharp objects">
+                              <option value={"Add protection measure"}>
+                                Add protection measures
+                              </option>
+                              <option value={"Exclusion"}>Exclusion</option>
+                              <option value={"Add warning"}>Add warning</option>
+                            </optgroup>
+                            <optgroup label="Caution for using electrical appliances">
+                              <option value={"Add protection measures"}>
+                                Add protection measures
+                              </option>
+                              <option value={"Exclusion"}>Exclusion</option>
+                              <option value={"Add warning"}>Add warning</option>
+                            </optgroup>
+                            <optgroup label="long standing from weak legs">
+                              <option value={"Sitting on a chair"}>
+                                Sitting on a chair
+                              </option>
+                              <option value={"Breaks every 10 minutes"}>
+                                Breaks every 10 minutes
+                              </option>
+                              <option
+                                value={
+                                  "modification change throughout the activity"
+                                }
+                              >
+                                modification change throughout the activity
+                              </option>
+                            </optgroup>
+                            <optgroup label="Place identification and spatial orientation">
+                              <option value={"Signs with text"}>
+                                Signs with text
+                              </option>
+                              <option value={"Images"}>Images </option>
+                              <option value={"Explain with voice"}>
+                                Explain with voice
+                              </option>
+                            </optgroup>
+                            <optgroup label="color blindness">
+                              <option value={"Different sorting method"}>
+                                Different sorting method
+                              </option>
+                              <option value={"Explain with voice"}>
+                                Explain with voice{" "}
+                              </option>
+                              <option value={"External control"}>
+                                External control
+                              </option>
+                            </optgroup>
+                          </Select>
+                        )}
+
+                        <TextField
+                          margin="dense"
+                          id="explaination"
+                          label="Explaination"
+                          type="text"
+                          value={currRow.explaination}
+                          onChange={(e) => {
+                            setCurrRow({
+                              ...currRow,
+                              explaination: e.target.value,
+                            });
+                            validateExplaination(e.target.value);
+                          }}
+                          error={Boolean(explainationError)}
+                          helperText={explainationError}
+                          style={{ borderColor: explainationBorderColor }}
+                          fullWidth
+                        />
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={handleReset}>Reset</Button>
+                        <Button onClick={() => handleSaveEN(currRow)}>
+                          Save
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
+                    // </Draggable>
+                  )}
+                  <DataTableLTR
+                    tableType={"FlagsEN"}
+                    columns={columnsFlagsEN}
+                    setColumns={setColumnsFlagsEN}
+                    rows={rowsFlagsEN}
+                    isInfo={true}
+                    fillFalse={fillFalse}
+                  />
+                </div>
+              </div>
+            )}
+
+            {selectedTable === "cognitiveProfile" && (
+              <div>
+                <div className="headline">Cogntive Profile</div>
+                <div className="table">
+                  <DataTableLTR
+                    tableType={"CognitiveProfileEN"}
+                    columns={columnsCognitiveHE}
+                    setColumns={setColumnsCognitiveHE}
+                    rows={rowsCognitiveHE}
+                    isInfo={false}
+                    fillFalse={fillFalse}
+                  />
+                </div>
+              </div>
+            )}
+
+            {selectedTable === "privateCard" && (
+              <div>
+                <div className="headline">Private Card</div>
+                <div className="table">
+                  <DataTableLTR
+                    tableType={"PrivateCardEN"}
+                    columns={columnsPrivateCardHE}
+                    setColumns={setColumnsPrivateCardHE}
+                    rows={rowsPrivateCardHE}
+                    isInfo={false}
+                    fillFalse={fillFalse}
+                  />
+                </div>
+              </div>
+            )}
+
+            {selectedTable === "taskability" && (
+              <div>
+                <div className="headline">Taskability</div>
+                <div className="table">
+                  <DataTableLTR
+                    tableType={"TaskabilityEN"}
+                    columns={columnsTaskabilityHE}
+                    setColumns={setColumnsTaskabilityHE}
+                    rows={rowsTaskabilityHE}
+                    isInfo={false}
+                    fillFalse={fillFalse}
+                  />
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
