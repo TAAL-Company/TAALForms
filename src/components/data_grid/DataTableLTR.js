@@ -15,6 +15,7 @@ import {
 import { Button } from "@mui/material";
 import MultipleEdit from "../multiple_edit/MultipleEdit";
 import AddColumn from "../add_column/AddColumn";
+import SaveIcon from "@mui/icons-material/Save";
 
 import { DataGridPro } from "@mui/x-data-grid-pro";
 
@@ -102,21 +103,49 @@ function CustomToolbar({
         <>
           <div
             className="buttonaNavbar"
-            style={{ display: "flex", right: 0, paddingBottom: "10px" }}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              paddingBottom: "10px",
+            }}
           >
-            <Button variant="outlined" disabled style={{ marginRight: "10px" }}>
-              Multiple Edit
-            </Button>
-            <AddColumn columns={columns} setColumns={setColumns}></AddColumn>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Button
+                variant="outlined"
+                disabled
+                style={{ marginRight: "10px" }}
+              >
+                Multiple Edit
+              </Button>
+              <AddColumn columns={columns} setColumns={setColumns} />
+            </div>
+            <div style={{ display: "flex" }}>
+              <SaveIcon
+                fontSize="large"
+                color="primary"
+                style={{ zIndex: "5" }}
+              />
+            </div>
           </div>
         </>
       ) : (
         <>
           <div
             className="buttonaNavbar"
-            style={{ display: "flex", right: 0, paddingBottom: "10px" }}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              paddingBottom: "10px",
+            }}
           >
-            <AddColumn columns={columns} setColumns={setColumns}></AddColumn>
+            <AddColumn columns={columns} setColumns={setColumns} />
+            <div style={{ display: "flex", right: 0 }}>
+              <SaveIcon
+                fontSize="large"
+                color="primary"
+                style={{ zIndex: "5" }}
+              />
+            </div>
           </div>
         </>
       )}
