@@ -14,11 +14,28 @@ import {
 // import MultipleSelectChip from "./MultipleSelectChip";
 // import AccessibleTabs1 from "./AccessibleTabs1";
 import { heIL } from "@mui/x-data-grid";
-import { Button } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import MultipleEdit from "../multiple_edit/MultipleEdit";
 import AddColumn from "../add_column/AddColumn";
 import { DataGridPro } from "@mui/x-data-grid-pro";
 import SaveIcon from "@mui/icons-material/Save";
+
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 // const [columnsIds, setColumnsIds] = React.useState([
 //   { id: 3, fill: true },
@@ -194,6 +211,26 @@ const DataTableRTL = ({
     LanguagesHE: true,
   });
 
+  const [openDialogTrueFalse, setOpenDialogTrueFalse] = React.useState(false);
+  const [groupName, setGroupName] = React.useState("");
+
+  const handleClose = () => {
+    setOpenDialogTrueFalse(false);
+  };
+
+  const handleChange = (event) => {
+    fillFalse({ groupingColumn: "Languages", show: event.target.value });
+    console.log("PrivateInfoHE");
+    fillFalse({
+      groupingColumn: "PrivateInfoHE",
+      show: !columnFillRows.PrivateInfoHE,
+    });
+    setColumnFillRows((prev) => ({
+      ...prev,
+      PrivateInfoHE: !prev.PrivateInfoHE,
+    }));
+  };
+
   const columnGroupingModel = [
     {
       groupId: "PrivateInfoHE",
@@ -204,14 +241,16 @@ const DataTableRTL = ({
           style={{ cursor: "pointer", color: "white" }}
           onClick={() => {
             console.log("PrivateInfoHE");
-            fillFalse({
-              groupingColumn: "PrivateInfoHE",
-              show: !columnFillRows.PrivateInfoHE,
-            });
-            setColumnFillRows((prev) => ({
-              ...prev,
-              PrivateInfoHE: !prev.PrivateInfoHE,
-            }));
+            // fillFalse({
+            //   groupingColumn: "PrivateInfoHE",
+            //   show: !columnFillRows.PrivateInfoHE,
+            // });
+            // setColumnFillRows((prev) => ({
+            //   ...prev,
+            //   PrivateInfoHE: !prev.PrivateInfoHE,
+            // }));
+            setOpenDialogTrueFalse(true);
+            setGroupName("פרטים אישיים");
           }}
         >
           פרטים אישיים
@@ -233,14 +272,16 @@ const DataTableRTL = ({
           style={{ cursor: "pointer", color: "white" }}
           onClick={() => {
             console.log("HistoryHE");
-            fillFalse({
-              groupingColumn: "HistoryHE",
-              show: !columnFillRows.HistoryHE,
-            });
-            setColumnFillRows((prev) => ({
-              ...prev,
-              HistoryHE: !prev.HistoryHE,
-            }));
+            // fillFalse({
+            //   groupingColumn: "HistoryHE",
+            //   show: !columnFillRows.HistoryHE,
+            // });
+            // setColumnFillRows((prev) => ({
+            //   ...prev,
+            //   HistoryHE: !prev.HistoryHE,
+            // }));
+            setOpenDialogTrueFalse(true);
+            setGroupName("היסטוריה");
           }}
         >
           היסטוריה
@@ -262,14 +303,16 @@ const DataTableRTL = ({
           style={{ cursor: "pointer", color: "white" }}
           onClick={() => {
             console.log("LanguageComprehensionHE");
-            fillFalse({
-              groupingColumn: "LanguageComprehensionHE",
-              show: !columnFillRows.LanguageComprehensionHE,
-            });
-            setColumnFillRows((prev) => ({
-              ...prev,
-              LanguageComprehensionHE: !prev.LanguageComprehensionHE,
-            }));
+            // fillFalse({
+            //   groupingColumn: "LanguageComprehensionHE",
+            //   show: !columnFillRows.LanguageComprehensionHE,
+            // });
+            // setColumnFillRows((prev) => ({
+            //   ...prev,
+            //   LanguageComprehensionHE: !prev.LanguageComprehensionHE,
+            // }));
+            setOpenDialogTrueFalse(true);
+            setGroupName("הבנת שפה");
           }}
         >
           הבנת שפה
@@ -289,14 +332,16 @@ const DataTableRTL = ({
           style={{ cursor: "pointer", color: "white" }}
           onClick={() => {
             console.log("LanguagesHE");
-            fillFalse({
-              groupingColumn: "LanguagesHE",
-              show: !columnFillRows.LanguagesHE,
-            });
-            setColumnFillRows((prev) => ({
-              ...prev,
-              LanguagesHE: !prev.LanguagesHE,
-            }));
+            // fillFalse({
+            //   groupingColumn: "LanguagesHE",
+            //   show: !columnFillRows.LanguagesHE,
+            // });
+            // setColumnFillRows((prev) => ({
+            //   ...prev,
+            //   LanguagesHE: !prev.LanguagesHE,
+            // }));
+            setOpenDialogTrueFalse(true);
+            setGroupName("שפות");
           }}
         >
           שפות
@@ -446,6 +491,8 @@ const DataTableRTL = ({
                 workerName={workerName}
                 routeName={routeName}
                 siteName={siteName}
+                openDialogTrueFalse={openDialogTrueFalse}
+                setOpenDialogTrueFalse={setOpenDialogTrueFalse}
               />
             ),
           }}
@@ -460,6 +507,58 @@ const DataTableRTL = ({
             },
           }}
         />
+
+        <div>
+          <Dialog
+            style={{ direction: "rtl" }}
+            open={openDialogTrueFalse}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={handleClose}
+            aria-describedby="alert-dialog-slide-description"
+          >
+            <DialogTitle> ?רלוונטי {groupName} האם</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description">
+                בחירה של אופציה לא רלוונטי ימלא את את כל העמודות תחת הקטגוריה "
+                {groupName}" כלא רלוונטיות, ובחירה של רלוונטי יאפס את כל המשבצות
+                לריקות.
+              </DialogContentText>
+              <FormControl
+                sx={{
+                  m: 1,
+                  minWidth: 220,
+                  maxWidth: 220,
+                  "& 	.MuiInputLabel-formControl": {
+                    background: "#d3e2ec",
+                  },
+                }}
+                size="small"
+              >
+                {/* <InputLabel id="example1">{headers}</InputLabel> */}
+                <InputLabel id="example1">{groupName}</InputLabel>
+
+                <Select
+                  labelId="example1"
+                  id="example1"
+                  // defaultValue={true}
+                  value={columnFillRows.PrivateInfoHE}
+                  onChange={handleChange}
+                  autoWidth
+                  label={groupName}
+                >
+                  <MenuItem value={true}>הכרחי לביצוע המשימה</MenuItem>
+                  <MenuItem value={false}>לא הכרחי לביצוע המשימה</MenuItem>
+                </Select>
+              </FormControl>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Disagree</Button>
+              <Button onClick={handleClose}>Agree</Button>
+            </DialogActions>
+          </Dialog>
+          *
+        </div>
       </Box>
       {/* <pre style={{ fontSize: 10 }}>
         {JSON.stringify(selectedRows, null, 4)}
