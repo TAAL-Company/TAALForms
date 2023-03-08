@@ -20,11 +20,15 @@ import SaveIcon from "@mui/icons-material/Save";
 import { DataGridPro } from "@mui/x-data-grid-pro";
 
 function CustomToolbar({
-  isInfo,
+  isInfoUserRoute,
+  isInfoUserSite,
   tableType,
   selectedRows,
   columns,
   setColumns,
+  workerName,
+  routeName,
+  siteName,
 }) {
   return (
     <div>
@@ -42,11 +46,19 @@ function CustomToolbar({
           <GridToolbarExport style={{ color: "black" }} />
         </div>
 
-        {isInfo && (
+        {isInfoUserRoute && (
           <div className="info">
-            <div className="workerName">Worker: Eyal Engel</div>
+            <div className="workerName">Worker: {workerName}</div>
             <div className="workerRoute" style={{ paddingLeft: "25px" }}>
-              Route: Azrieli Tel-Aviv
+              Route: {routeName}
+            </div>
+          </div>
+        )}
+        {isInfoUserSite && (
+          <div className="info">
+            <div className="workerName">Worker: {workerName}</div>
+            <div className="workerRoute" style={{ paddingLeft: "25px" }}>
+              Site: {siteName}
             </div>
           </div>
         )}
@@ -157,9 +169,13 @@ const DataTableLTR = ({
   columns,
   setColumns,
   rows,
-  isInfo,
+  isInfoUserRoute,
+  isInfoUserSite,
   fillFalse,
   tableType,
+  workerName,
+  routeName,
+  siteName,
 }) => {
   const [selectedRows, setSelectedRows] = React.useState([]);
   const [columnFillRows, setColumnFillRows] = React.useState({
@@ -413,10 +429,14 @@ const DataTableLTR = ({
             Toolbar: () => (
               <CustomToolbar
                 tableType={tableType}
-                isInfo={isInfo}
+                isInfoUserRoute={isInfoUserRoute}
+                isInfoUserSite={isInfoUserSite}
                 selectedRows={selectedRows}
                 columns={columns}
                 setColumns={setColumns}
+                workerName={workerName}
+                routeName={routeName}
+                siteName={siteName}
               />
             ),
           }}

@@ -38,6 +38,16 @@ function App() {
   const [explainationError, setExplainationError] = useState("");
   const [interventionError, setinterventionError] = useState("");
 
+  // this six variables will be get as props from editor window (editor will take this from DB)
+
+  const [workerNameEN, setWorkerNameEN] = useState("Eyal Engel");
+  const [routeNameEN, setRouteNameEN] = useState("Azrieli Tel Aviv - Morning");
+  const [siteNameEN, setSiteNameEN] = useState("Azrieli Tel Aviv");
+
+  const [workerNameHE, setWorkerNameHE] = useState("אייל אנגל");
+  const [routeNameHE, setRouteNameHE] = useState("עזריאלי תל אביב - בוקר");
+  const [siteNameHE, setSiteNameHE] = useState("עזריאלי תל אביב");
+
   const [selectedTable, setSelectedTable] = useState("flags");
   const handleSelectTable = (table) => {
     setSelectedTable(table);
@@ -2899,8 +2909,12 @@ function App() {
                     columns={columnsFlagsHE}
                     setColumns={setColumnsFlagsHE}
                     rows={rowsFlagsHE}
-                    isInfo={true}
+                    isInfoUserRoute={true}
+                    isInfoUserSite={false}
                     fillFalse={fillFalse}
+                    workerName={workerNameHE}
+                    routeName={routeNameHE}
+                    siteName={siteNameHE}
                   />
                 </div>
               </div>
@@ -2915,8 +2929,12 @@ function App() {
                     columns={columnsCognitiveHE}
                     setColumns={setColumnsCognitiveHE}
                     rows={rowsCognitiveHE}
-                    isInfo={false}
+                    isInfoUserRoute={false}
+                    isInfoUserSite={true}
                     fillFalse={fillFalse}
+                    workerName={workerNameHE}
+                    routeName={routeNameHE}
+                    siteName={siteNameHE}
                   />
                 </div>
               </div>
@@ -2931,8 +2949,12 @@ function App() {
                     columns={columnsPrivateCardHE}
                     setColumns={setColumnsPrivateCardHE}
                     rows={rowsPrivateCardHE}
-                    isInfo={false}
+                    isInfoUserRoute={false}
+                    isInfoUserSite={false}
                     fillFalse={fillFalse}
+                    workerName={workerNameHE}
+                    routeName={null}
+                    siteName={null}
                   />
                 </div>
               </div>
@@ -2947,8 +2969,12 @@ function App() {
                     columns={columnsTaskabilityHE}
                     setColumns={setColumnsTaskabilityHE}
                     rows={rowsTaskabilityHE}
-                    isInfo={false}
+                    isInfoUserRoute={false}
+                    isInfoUserSite={false}
                     fillFalse={fillFalse}
+                    workerName={null}
+                    routeName={routeNameHE}
+                    siteName={siteNameHE}
                   />
                 </div>
               </div>
@@ -3308,8 +3334,12 @@ function App() {
                     columns={columnsFlagsEN}
                     setColumns={setColumnsFlagsEN}
                     rows={rowsFlagsEN}
-                    isInfo={true}
+                    isInfoUserRoute={true}
+                    isInfoUserSite={false}
                     fillFalse={fillFalse}
+                    workerName={workerNameEN}
+                    routeName={routeNameEN}
+                    siteName={siteNameEN}
                   />
                 </div>
               </div>
@@ -3324,8 +3354,12 @@ function App() {
                     columns={columnsCognitiveHE}
                     setColumns={setColumnsCognitiveHE}
                     rows={rowsCognitiveHE}
-                    isInfo={false}
+                    isInfoUserRoute={false}
+                    isInfoUserSite={true}
                     fillFalse={fillFalse}
+                    workerName={workerNameEN}
+                    routeName={routeNameEN}
+                    siteName={siteNameEN}
                   />
                 </div>
               </div>
@@ -3340,8 +3374,12 @@ function App() {
                     columns={columnsPrivateCardHE}
                     setColumns={setColumnsPrivateCardHE}
                     rows={rowsPrivateCardHE}
-                    isInfo={false}
+                    isInfoUserRoute={false}
+                    isInfoUserSite={false}
                     fillFalse={fillFalse}
+                    workerName={workerNameEN}
+                    routeName={null}
+                    siteName={null}
                   />
                 </div>
               </div>
@@ -3356,8 +3394,12 @@ function App() {
                     columns={columnsTaskabilityHE}
                     setColumns={setColumnsTaskabilityHE}
                     rows={rowsTaskabilityHE}
-                    isInfo={false}
+                    isInfoUserRoute={false}
+                    isInfoUserSite={false}
                     fillFalse={fillFalse}
+                    workerName={null}
+                    routeName={routeNameEN}
+                    siteName={siteNameEN}
                   />
                 </div>
               </div>

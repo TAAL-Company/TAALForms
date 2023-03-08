@@ -27,11 +27,15 @@ import SaveIcon from "@mui/icons-material/Save";
 // ]);
 
 function CustomToolbar({
-  isInfo,
+  isInfoUserRoute,
+  isInfoUserSite,
   tableType,
   selectedRows,
   columns,
   setColumns,
+  workerName,
+  routeName,
+  siteName,
 }) {
   return (
     <div>
@@ -50,10 +54,17 @@ function CustomToolbar({
           <GridToolbarExport style={{ color: "black" }} />
         </div>
 
-        {isInfo && (
+        {isInfoUserRoute && (
           <div className="info">
-            <div className="workerName">שם עובד: אייל אנגל</div>
-            <div className="workerRoute">שם מסלול: עזריאלי תל אביב</div>
+            <div className="workerName">שם עובד: {workerName}</div>
+            <div className="workerRoute">שם מסלול: {routeName}</div>
+          </div>
+        )}
+
+        {isInfoUserSite && (
+          <div className="info">
+            <div className="workerName">שם עובד: {workerName}</div>
+            <div className="workerRoute">שם אתר: {siteName}</div>
           </div>
         )}
 
@@ -167,9 +178,13 @@ const DataTableRTL = ({
   columns,
   setColumns,
   rows,
-  isInfo,
+  isInfoUserRoute,
+  isInfoUserSite,
   fillFalse,
   tableType,
+  workerName,
+  routeName,
+  siteName,
 }) => {
   const [selectedRows, setSelectedRows] = React.useState([]);
   const [columnFillRows, setColumnFillRows] = React.useState({
@@ -423,10 +438,14 @@ const DataTableRTL = ({
             Toolbar: () => (
               <CustomToolbar
                 tableType={tableType}
-                isInfo={isInfo}
+                isInfoUserRoute={isInfoUserRoute}
+                isInfoUserSite={isInfoUserSite}
                 selectedRows={selectedRows}
                 columns={columns}
                 setColumns={setColumns}
+                workerName={workerName}
+                routeName={routeName}
+                siteName={siteName}
               />
             ),
           }}
