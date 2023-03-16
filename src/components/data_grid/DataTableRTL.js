@@ -3,6 +3,8 @@ import Box from "@mui/material/Box";
 import "./DataTableRTL.css";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
+import { useEffect, useState } from "react";
+
 import {
   GridToolbarContainer,
   GridToolbarExport,
@@ -25,7 +27,7 @@ import MultipleEdit from "../multiple_edit/MultipleEdit";
 import AddColumn from "../add_column/AddColumn";
 import { DataGridPro } from "@mui/x-data-grid-pro";
 import SaveIcon from "@mui/icons-material/Save";
-
+import CustomToolbar from "./CustomToolbar";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -36,160 +38,6 @@ import Slide from "@mui/material/Slide";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-
-// const [columnsIds, setColumnsIds] = React.useState([
-//   { id: 3, fill: true },
-//   { id: 2, fill: false },
-//   { id: 1, fill: false },
-// ]);
-
-function CustomToolbar({
-  isInfoUserRoute,
-  isInfoUserSite,
-  tableType,
-  selectedRows,
-  columns,
-  setColumns,
-  workerName,
-  routeName,
-  siteName,
-}) {
-  return (
-    <div>
-      <GridToolbarContainer
-        style={{
-          paddingTop: "20px",
-          paddingBottom: "15px",
-          direction: "rtl",
-          justifyContent: "space-between",
-        }}
-      >
-        <div>
-          <GridToolbarColumnsButton style={{ color: "black" }} />
-          <GridToolbarFilterButton style={{ color: "black" }} />
-          <GridToolbarDensitySelector style={{ color: "black" }} />
-          <GridToolbarExport style={{ color: "black" }} />
-        </div>
-
-        {isInfoUserRoute && (
-          <div className="info">
-            <div className="workerName">שם עובד: {workerName}</div>
-            <div className="workerRoute">שם מסלול: {routeName}</div>
-          </div>
-        )}
-
-        {isInfoUserSite && (
-          <div className="info">
-            <div className="workerName">שם עובד: {workerName}</div>
-            <div className="workerRoute">שם אתר: {siteName}</div>
-          </div>
-        )}
-
-        <div>
-          <InputAdornment position="start">
-            <GridToolbarQuickFilter
-              InputProps={{ disableUnderline: true }}
-              placeholder="חיפוש"
-              style={{
-                paddingRight: "10px",
-                width: "250px",
-                position: "relative",
-                borderRadius: "8px",
-                paddingBottom: "2px",
-                marginTop: "2px",
-                background: "white",
-              }}
-              sx={{
-                "& .MuiInputBase-root": {
-                  // background: "blue",
-                  width: "87%",
-                  height: "28px",
-                },
-              }}
-            />
-            <SearchIcon
-              style={{
-                marginRight: "-30px",
-                zIndex: "5",
-              }}
-            />
-          </InputAdornment>
-        </div>
-      </GridToolbarContainer>
-
-      {tableType === "TaskabilityHE" && selectedRows.length >= 2 ? (
-        <>
-          <div
-            className="buttonaNavbar"
-            style={{ display: "flex", right: 0, paddingBottom: "10px" }}
-          >
-            <div style={{ marginLeft: "10px" }}>
-              <MultipleEdit
-                textButton={"עריכה קבוצתית"}
-                selectedRows={selectedRows}
-                fieldsCount={columns.length}
-                columns={columns}
-              />{" "}
-            </div>
-
-            <AddColumn columns={columns} setColumns={setColumns}></AddColumn>
-            {/* {selectedRows.map((item) => item.tasks)} */}
-          </div>
-        </>
-      ) : tableType === "TaskabilityHE" ? (
-        <>
-          <div
-            className="buttonaNavbar"
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              paddingBottom: "10px",
-            }}
-          >
-            {" "}
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Button
-                variant="outlined"
-                disabled
-                style={{ marginLeft: "10px" }}
-              >
-                עריכה קבוצתית
-              </Button>
-              <AddColumn columns={columns} setColumns={setColumns}></AddColumn>
-            </div>
-            <div style={{ display: "flex" }}>
-              <SaveIcon
-                fontSize="large"
-                color="primary"
-                style={{ zIndex: "5" }}
-              />
-            </div>
-          </div>
-        </>
-      ) : (
-        <>
-          <div
-            className="buttonaNavbar"
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              paddingBottom: "10px",
-            }}
-          >
-            <AddColumn columns={columns} setColumns={setColumns}></AddColumn>
-            <div style={{ display: "flex", right: 0 }}>
-              <SaveIcon
-                fontSize="large"
-                color="primary"
-                style={{ zIndex: "5" }}
-              />
-            </div>
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
 
 const DataTableRTL = ({
   columns,
@@ -202,6 +50,9 @@ const DataTableRTL = ({
   workerName,
   routeName,
   siteName,
+  setWorker,
+  allUsers,
+  setChangeUser,
 }) => {
   const [selectedRows, setSelectedRows] = React.useState([]);
   const [columnFillRows, setColumnFillRows] = React.useState({
@@ -211,11 +62,20 @@ const DataTableRTL = ({
     LanguagesHE: true,
   });
 
+  useEffect(() => {
+    console.log("rows:", rows);
+  }, [rows]);
+
   const [openDialogTrueFalse, setOpenDialogTrueFalse] = React.useState(false);
   const [groupName, setGroupName] = React.useState("");
 
   const handleClose = () => {
     setOpenDialogTrueFalse(false);
+  };
+  const handleCellEdit = (params) => {
+    console.log("params", params);
+    console.log("params", params.field);
+    console.log("params", params.value);
   };
 
   const handleChange = (event) => {
@@ -409,6 +269,7 @@ const DataTableRTL = ({
         <div></div>
 
         <DataGridPro
+          onCellEditCommit={handleCellEdit}
           sx={{
             direction: "rtl",
             "& .MuiDataGrid-virtualScroller": {
@@ -461,7 +322,7 @@ const DataTableRTL = ({
           }
           rows={rows}
           columns={columns}
-          pageSize={10}
+          pageSize={100}
           // rowHeight={52}
           getRowHeight={() => "auto"}
           // getEstimatedRowHeight={() => 150}
@@ -482,6 +343,9 @@ const DataTableRTL = ({
           components={{
             Toolbar: () => (
               <CustomToolbar
+                setChangeUser={setChangeUser}
+                allUsers={allUsers}
+                setWorker={setWorker}
                 tableType={tableType}
                 isInfoUserRoute={isInfoUserRoute}
                 isInfoUserSite={isInfoUserSite}
