@@ -4,6 +4,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
 import { getingDataUsers } from "../../api/api";
+import "./CustomToolbar.css";
 
 import {
   GridToolbarContainer,
@@ -32,12 +33,20 @@ const CustomToolbar = ({
   routeName,
   siteName,
   setWorker,
+  worker,
   allUsers,
   setChangeUser,
+  setSaveProfileChanges,
 }) => {
+  const saveProfileChanges = (e) => {
+    console.log("true");
+    setSaveProfileChanges(true);
+  };
   const handleChange = (event) => {
-    console.log("worker", event.target.value);
-    setWorker(event.target.value);
+    const selectedValue = JSON.parse(event.target.value);
+
+    console.log("worker", selectedValue);
+    setWorker(selectedValue);
     setChangeUser(true);
   };
   return (
@@ -74,18 +83,18 @@ const CustomToolbar = ({
                 onChange={handleChange}
               >
                 <option value="DEFAULT" disabled>
-                  בחירת משתמש
+                  {worker.length == 0 ? "בחירת משתמש" : worker.name}
                 </option>
                 {allUsers.map((value, index) => {
                   return (
-                    <option key={index} value={value.id}>
+                    <option key={index} value={JSON.stringify(value)}>
                       {value.name}
                     </option>
                   );
                 })}
               </select>
             </div>
-            <div className="workerRoute">שם אתר: {siteName}</div>
+            {/* <div className="workerRoute">שם אתר: {siteName}</div> */}
           </div>
         )}
 
@@ -186,6 +195,7 @@ const CustomToolbar = ({
                 fontSize="large"
                 color="primary"
                 style={{ zIndex: "5" }}
+                onClick={saveProfileChanges}
               />
             </div>
           </div>

@@ -51,8 +51,13 @@ const DataTableRTL = ({
   routeName,
   siteName,
   setWorker,
+  worker,
   allUsers,
   setChangeUser,
+  setRows,
+  setCognitiveProfileValues,
+  cognitiveProfileValues,
+  setSaveProfileChanges,
 }) => {
   const [selectedRows, setSelectedRows] = React.useState([]);
   const [columnFillRows, setColumnFillRows] = React.useState({
@@ -72,10 +77,34 @@ const DataTableRTL = ({
   const handleClose = () => {
     setOpenDialogTrueFalse(false);
   };
+
   const handleCellEdit = (params) => {
     console.log("params", params);
     console.log("params", params.field);
     console.log("params", params.value);
+    if (params.value >= 0 && params.value < 6) {
+      const updatedRows = rows.map((row) => {
+        if (row.id === params.id) {
+          return {
+            ...row,
+            [params.field]: params.value,
+          };
+        } else {
+          return row;
+        }
+      });
+
+      setRows(updatedRows);
+      setCognitiveProfileValues(
+        cognitiveProfileValues.map((cog, index) => {
+          if (index === params.id) {
+            return parseInt(params.value);
+          } else {
+            return cog;
+          }
+        })
+      );
+    }
   };
 
   const handleChange = (event) => {
@@ -343,9 +372,11 @@ const DataTableRTL = ({
           components={{
             Toolbar: () => (
               <CustomToolbar
+                setSaveProfileChanges={setSaveProfileChanges}
                 setChangeUser={setChangeUser}
                 allUsers={allUsers}
                 setWorker={setWorker}
+                worker={worker}
                 tableType={tableType}
                 isInfoUserRoute={isInfoUserRoute}
                 isInfoUserSite={isInfoUserSite}

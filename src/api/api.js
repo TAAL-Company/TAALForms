@@ -10,7 +10,16 @@ export const get = async (url, header) => {
     console.log(e);
   }
 };
-
+export const patch = async (url, body, headers) => {
+  try {
+    const res = await axios.patch(url, body, { headers });
+    if (res) {
+      console.log("success");
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
 export const post = async (url, body, header) => {
   try {
     const res = await axios.post(url, body, header); //body and header shuld be an object
@@ -47,4 +56,21 @@ export const getingDataTasks = async () => {
   });
 
   return allTasks;
+};
+export const postDataCognitiveProfile = async (
+  workerId,
+  cognitiveProfileValues
+) => {
+  const url =
+    "https://prod-web-app0da5905.azurewebsites.net/cognitive-profiles/" +
+    workerId;
+  const body = {
+    value: cognitiveProfileValues,
+  };
+  const headers = {
+    "Content-Type": "application/json",
+    Accept: "*/*",
+  };
+
+  await patch(url, body, headers);
 };

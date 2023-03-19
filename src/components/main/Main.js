@@ -6,7 +6,11 @@ import Status from "../classification_component/Status";
 import StatusLTR from "../classification_component/StatusLTR";
 import cognitiveList from "../../api/cognitive.json";
 import taskpic from "../../Pictures/taskpic.png";
-import { getingDataUsers, getingDataTasks } from "../../api/api";
+import {
+  getingDataUsers,
+  getingDataTasks,
+  postDataCognitiveProfile,
+} from "../../api/api";
 import taskpic1 from "../../Pictures/taskpic1.jpg";
 import taskpic2 from "../../Pictures/taskpic2.jpeg";
 import taskpic3 from "../../Pictures/taskpic3.jpg";
@@ -43,16 +47,17 @@ function Main() {
   const [routeNameEN, setRouteNameEN] = useState("Azrieli Tel Aviv - Morning");
   const [siteNameEN, setSiteNameEN] = useState("Azrieli Tel Aviv");
 
-  const [worker, setWorker] = useState("");
+  const [worker, setWorker] = useState([]);
 
   const [workerNameHE, setWorkerNameHE] = useState("אייל אנגל");
   const [routeNameHE, setRouteNameHE] = useState("עזריאלי תל אביב - בוקר");
-  const [siteNameHE, setSiteNameHE] = useState("עזריאלי תל אביב");
+  const [siteNameHE, setSiteNameHE] = useState("");
   let loadingCog = false;
   let loadingTaskAb = false;
 
   const [rowsCognitiveHE, setRowsCognitiveHE] = useState([]);
   const [changeUser, setChangeUser] = useState(false);
+  const [saveProfileChanges, setSaveProfileChanges] = useState(false);
 
   const [cognitiveProfileValues, setCognitiveProfileValues] = useState([]);
   const [columnsTaskabilityHE, setColumnsTaskabilityHE] = useState([
@@ -89,6 +94,7 @@ function Main() {
       align: "center",
     },
   ]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -103,6 +109,7 @@ function Main() {
   useEffect(() => {
     console.log("worker", worker);
   }, [worker]);
+
   useEffect(() => {
     console.log("columnsTaskabilityHE", columnsTaskabilityHE);
     if (columnsTaskabilityHE.length > 0 && !loadingTaskAb) {
@@ -126,9 +133,18 @@ function Main() {
   }, []);
 
   useEffect(() => {
+    if (saveProfileChanges === true) {
+      setSaveProfileChanges(false);
+      if (worker.length != 0) {
+        postDataCognitiveProfile(worker.id, cognitiveProfileValues);
+        console.log("66 cognitiveProfileValues", cognitiveProfileValues);
+      }
+    }
+  }, [saveProfileChanges]);
+  useEffect(() => {
     const fetchData = async () => {
       try {
-        setCognitiveProfileValues(await getCognitiveProfile(worker));
+        setCognitiveProfileValues(await getCognitiveProfile(worker.id));
       } catch (error) {
         console.error(error.message);
         setCognitiveProfileValues(new Array(242).fill(0));
@@ -148,8 +164,6 @@ function Main() {
         let cogValue = 0;
         if (cognitiveProfileValues != undefined)
           cogValue = cognitiveProfileValues[cognitive.NO];
-
-        console.log("cogValue", cogValue);
 
         setRowsCognitiveHE((prev) => [
           ...prev,
@@ -1984,6 +1998,7 @@ function Main() {
                     fillFalse={fillFalse}
                     workerName={workerNameHE}
                     setWorker={setWorker}
+                    worker={worker}
                     routeName={routeNameHE}
                     siteName={siteNameHE}
                   />
@@ -2002,12 +2017,17 @@ function Main() {
                     columns={columnsCognitiveHE}
                     setColumns={setColumnsCognitiveHE}
                     rows={rowsCognitiveHE}
+                    setRows={setRowsCognitiveHE}
+                    setCognitiveProfileValues={setCognitiveProfileValues}
+                    setSaveProfileChanges={setSaveProfileChanges}
+                    cognitiveProfileValues={cognitiveProfileValues}
                     setRowsCognitiveHE={setRowsCognitiveHE}
                     isInfoUserRoute={false}
                     isInfoUserSite={true}
                     fillFalse={fillFalse}
                     workerName={workerNameHE}
                     setWorker={setWorker}
+                    worker={worker}
                     routeName={routeNameHE}
                     siteName={siteNameHE}
                   />
@@ -2031,6 +2051,7 @@ function Main() {
                     fillFalse={fillFalse}
                     workerName={workerNameHE}
                     setWorker={setWorker}
+                    worker={worker}
                     routeName={null}
                     siteName={null}
                   />
